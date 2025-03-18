@@ -8,7 +8,7 @@ import MyProfile from "./pages/MyProfile";
 import MyOrders from "./pages/MyOrders";
 import Navbar from "./components/Navbar";
 import Feedback from "./pages/Feedback";
-import Footer from "./components/Footer"; // ✅ Import Footer
+import Footer from "./components/Footer";
 
 const App = () => {
   return (
