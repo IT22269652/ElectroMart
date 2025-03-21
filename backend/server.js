@@ -3,25 +3,33 @@ import cors from "cors";
 import "dotenv/config";
 import { connectDB } from "./config/db.js";
 import userRouter from "./routes/userRoute.js";
+import feedbackRouter from "./routes/feedbackRoute.js"; // Import Feedback Routes
 
-// app config
+// App Configuration
 const app = express();
-const port = 4000;
+const PORT = process.env.PORT || 5000;
 
-// middleware
+// Middleware
 app.use(express.json());
 app.use(cors());
 
-// db connection
+// Database Connection
 connectDB();
 
-// api endpoints
+// API Routes
 app.use("/api/user", userRouter);
+app.use("/api/feedback", feedbackRouter); // Add Feedback API Route
 
+// Root Route
 app.get("/", (req, res) => {
-  res.send("API WORKING");
+  res.send("🚀 API is working!");
 });
 
-app.listen(port, () => {
-  console.log(`Server Started on http://localhost:${port}`);
-});
+// Start Server with Error Handling
+app
+  .listen(PORT, () => {
+    console.log(`✅ Server started on http://localhost:${PORT}`);
+  })
+  .on("error", (err) => {
+    console.error("❌ Server failed to start:", err.message);
+  });
