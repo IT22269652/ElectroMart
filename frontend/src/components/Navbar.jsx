@@ -1,17 +1,17 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react"; // Import useState
 import { assets } from "../assets/assets";
 import { NavLink, useNavigate } from "react-router-dom";
+import { AuthContext } from "../components/AuthContext";
 
 const Navbar = () => {
   const navigate = useNavigate();
-  const [showMenu, setShowMenu] = useState(false);
-  const [token, setToken] = useState(true);
+  const [showMenu, setShowMenu] = useState(false); // useState is now imported
+  const { isLoggedIn, logout } = useContext(AuthContext); // Use AuthContext
   const [searchQuery, setSearchQuery] = useState("");
 
   // Handle search
   const handleSearch = (e) => {
     setSearchQuery(e.target.value);
-    // Implement search logic based on your needs (e.g., filtering items)
     console.log("Searching for:", e.target.value);
   };
 
@@ -49,7 +49,7 @@ const Navbar = () => {
 
       {/* User Profile / Login Button */}
       <div className="flex items-center gap-4">
-        {token ? (
+        {isLoggedIn ? (
           <div className="flex items-center gap-2 cursor-pointer group relative">
             <img
               className="w-8 rounded-full"
@@ -71,10 +71,7 @@ const Navbar = () => {
                 >
                   My Orders
                 </p>
-                <p
-                  onClick={() => setToken(false)}
-                  className="hover:text-black cursor-pointer"
-                >
+                <p onClick={logout} className="hover:text-black cursor-pointer">
                   Logout
                 </p>
               </div>
