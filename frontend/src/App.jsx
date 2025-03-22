@@ -1,5 +1,6 @@
 import React from "react";
 import { Route, Routes } from "react-router-dom";
+import { AuthProvider } from "./components/AuthContext"; // Import AuthProvider
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import About from "./pages/About";
@@ -9,26 +10,34 @@ import MyOrders from "./pages/MyOrders";
 import Navbar from "./components/Navbar";
 import Feedback from "./pages/Feedback";
 import Footer from "./components/Footer";
+import Feedbackdetails from "./pages/Feedbackdetails";
+import Updatefeedback from "./pages/Updatefeedback";
 
 const App = () => {
   return (
-    <div className="mx-4 sm:mx-[10%] flex flex-col min-h-screen">
-      <Navbar />
-      <div className="flex-grow">
-        {" "}
-        {/* Ensures footer stays at the bottom */}
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/feedback" element={<Feedback />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/contact" element={<Contact />} />
-          <Route path="/my-profile" element={<MyProfile />} />
-          <Route path="/my-orders" element={<MyOrders />} />
-        </Routes>
+    <AuthProvider>
+      {" "}
+      {/* Wrap the app with AuthProvider */}
+      <div className="mx-4 sm:mx-[10%] flex flex-col min-h-screen">
+        <Navbar />
+        <div className="flex-grow">
+          {" "}
+          {/* Ensures footer stays at the bottom */}
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/feedback" element={<Feedback />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/contact" element={<Contact />} />
+            <Route path="/my-profile" element={<MyProfile />} />
+            <Route path="/my-orders" element={<MyOrders />} />
+            <Route path="/feedbackdetails" element={<Feedbackdetails />} />
+            <Route path="/updatefeedback" element={<Updatefeedback />} />
+          </Routes>
+        </div>
         <Footer />
       </div>
-    </div>
+    </AuthProvider>
   );
 };
 
