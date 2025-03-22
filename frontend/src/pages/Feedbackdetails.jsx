@@ -107,7 +107,7 @@ const Feedbackdetails = () => {
   return (
     <div className="min-h-screen p-8 bg-gradient-to-br">
       <h2 className="text-3xl font-bold text-blue-700 text-center mb-6">
-        📃 Feedback Details
+        📃 Manage Details
       </h2>
 
       {/* Search and Generate Report Section */}
