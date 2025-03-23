@@ -7,9 +7,59 @@ const Feedback = () => {
   const [email, setEmail] = useState("");
   const [contactNo, setContactNo] = useState("");
   const [description, setDescription] = useState("");
+  const [errors, setErrors] = useState({});
+
+  const validateForm = () => {
+    const newErrors = {};
+
+    // Name validation
+    if (!name.trim()) {
+      newErrors.name = "Name is required";
+    } else if (name.length < 2) {
+      newErrors.name = "Name must be at least 2 characters long";
+    } else if (name.length > 50) {
+      newErrors.name = "Name must be less than 50 characters";
+    } else if (!/^[A-Za-z\s]+$/.test(name)) {
+      newErrors.name = "Name should contain only alphabets and spaces";
+    }
+
+    // Email validation
+    if (!email.trim()) {
+      newErrors.email = "Email is required";
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      newErrors.email = "Invalid email format";
+    }
+
+    // Contact Number validation
+    if (!contactNo.trim()) {
+      newErrors.contactNo = "Contact number is required";
+    } else if (!/^\d+$/.test(contactNo)) {
+      newErrors.contactNo = "Contact number should contain only digits";
+    } else if (contactNo.length < 10) {
+      newErrors.contactNo = "Contact number must be at least 10 digits long";
+    } else if (contactNo.length > 15) {
+      newErrors.contactNo = "Contact number must be less than 15 digits";
+    }
+
+    // Description validation
+    if (!description.trim()) {
+      newErrors.description = "Description is required";
+    } else if (description.length < 10) {
+      newErrors.description = "Description must be at least 10 characters long";
+    } else if (description.length > 500) {
+      newErrors.description = "Description must be less than 500 characters";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!validateForm()) {
+      return;
+    }
 
     const feedbackData = { name, email, contactNo, description };
 
@@ -59,6 +109,9 @@ const Feedback = () => {
               value={name}
               required
             />
+            {errors.name && (
+              <p className="text-red-500 text-sm mt-1">{errors.name}</p>
+            )}
           </div>
 
           <div>
@@ -71,6 +124,9 @@ const Feedback = () => {
               value={email}
               required
             />
+            {errors.email && (
+              <p className="text-red-500 text-sm mt-1">{errors.email}</p>
+            )}
           </div>
 
           <div>
@@ -83,6 +139,9 @@ const Feedback = () => {
               value={contactNo}
               required
             />
+            {errors.contactNo && (
+              <p className="text-red-500 text-sm mt-1">{errors.contactNo}</p>
+            )}
           </div>
 
           <div>
@@ -94,6 +153,9 @@ const Feedback = () => {
               value={description}
               required
             />
+            {errors.description && (
+              <p className="text-red-500 text-sm mt-1">{errors.description}</p>
+            )}
           </div>
         </div>
 
