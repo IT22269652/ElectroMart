@@ -12,6 +12,8 @@ import Feedback from "./pages/Feedback";
 import Footer from "./components/Footer";
 import Feedbackdetails from "./pages/Feedbackdetails";
 import Updatefeedback from "./pages/Updatefeedback";
+import ProductDetails from "./pages/ProductHandling/ProductDetails";
+import Header from "./components/Header";
 
 const App = () => {
   return (
@@ -33,6 +35,9 @@ const App = () => {
             <Route path="/my-orders" element={<MyOrders />} />
             <Route path="/feedbackdetails" element={<Feedbackdetails />} />
             <Route path="/updatefeedback" element={<Updatefeedback />} />
+            <Route path="/productdetails" element={ProductDetails} />
+            <Route path="/" element={<Header />} />
+            <Route path="/product/:productId" element={<ProductDetails />} />
           </Routes>
         </div>
         <Footer />
