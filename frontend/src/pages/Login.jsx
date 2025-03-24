@@ -44,58 +44,55 @@ const Login = () => {
       !/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(
         data.password
       )
-    ) {
-      newErrors.password =
-        "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character";
-    }
+    )
+      if (state === "Sign Up") {
+        // Sign Up specific validations
+        if (!data.name.trim()) {
+          newErrors.name = "Name is required";
+        } else if (data.name.length < 2) {
+          newErrors.name = "Name must be at least 2 characters long";
+        } else if (data.name.length > 50) {
+          newErrors.name = "Name must be less than 50 characters";
+        } else if (!/^[A-Za-z\s]+$/.test(data.name)) {
+          newErrors.name = "Name should contain only alphabets and spaces";
+        }
 
-    // Sign Up specific validations
-    if (state === "Sign Up") {
-      if (!data.name.trim()) {
-        newErrors.name = "Name is required";
-      } else if (data.name.length < 2) {
-        newErrors.name = "Name must be at least 2 characters long";
-      } else if (data.name.length > 50) {
-        newErrors.name = "Name must be less than 50 characters";
-      } else if (!/^[A-Za-z\s]+$/.test(data.name)) {
-        newErrors.name = "Name should contain only alphabets and spaces";
-      }
+        if (!data.contactNo.trim()) {
+          newErrors.contactNo = "Contact number is required";
+        } else if (!/^\d+$/.test(data.contactNo)) {
+          newErrors.contactNo = "Contact number should contain only digits";
+        } else if (data.contactNo.length < 10) {
+          newErrors.contactNo =
+            "Contact number must be at least 10 digits long";
+        } else if (data.contactNo.length > 15) {
+          newErrors.contactNo = "Contact number must be less than 15 digits";
+        }
 
-      if (!data.contactNo.trim()) {
-        newErrors.contactNo = "Contact number is required";
-      } else if (!/^\d+$/.test(data.contactNo)) {
-        newErrors.contactNo = "Contact number should contain only digits";
-      } else if (data.contactNo.length < 10) {
-        newErrors.contactNo = "Contact number must be at least 10 digits long";
-      } else if (data.contactNo.length > 15) {
-        newErrors.contactNo = "Contact number must be less than 15 digits";
-      }
+        if (!data.address.trim()) {
+          newErrors.address = "Address is required";
+        } else if (data.address.length < 10) {
+          newErrors.address = "Address must be at least 10 characters long";
+        } else if (data.address.length > 200) {
+          newErrors.address = "Address must be less than 200 characters";
+        }
 
-      if (!data.address.trim()) {
-        newErrors.address = "Address is required";
-      } else if (data.address.length < 10) {
-        newErrors.address = "Address must be at least 10 characters long";
-      } else if (data.address.length > 200) {
-        newErrors.address = "Address must be less than 200 characters";
-      }
+        if (!data.gender.trim()) {
+          newErrors.gender = "Gender is required";
+        }
 
-      if (!data.gender.trim()) {
-        newErrors.gender = "Gender is required";
-      }
-
-      if (!data.birthday.trim()) {
-        newErrors.birthday = "Birthday is required";
-      } else {
-        const today = new Date();
-        const birthDate = new Date(data.birthday);
-        const age = today.getFullYear() - birthDate.getFullYear();
-        if (birthDate > today) {
-          newErrors.birthday = "Birthday cannot be in the future";
-        } else if (age < 13) {
-          newErrors.birthday = "You must be at least 13 years old";
+        if (!data.birthday.trim()) {
+          newErrors.birthday = "Birthday is required";
+        } else {
+          const today = new Date();
+          const birthDate = new Date(data.birthday);
+          const age = today.getFullYear() - birthDate.getFullYear();
+          if (birthDate > today) {
+            newErrors.birthday = "Birthday cannot be in the future";
+          } else if (age < 13) {
+            newErrors.birthday = "You must be at least 13 years old";
+          }
         }
       }
-    }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
