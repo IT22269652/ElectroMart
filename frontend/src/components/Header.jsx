@@ -187,10 +187,14 @@ const Header = () => {
           <h1 className="text-4xl md:text-5xl font-bold leading-tight">
             🛒 Shop the Latest Electronics
           </h1>
-          <p className="mt-4 text-sm md:text-base">
-            Explore the newest gadgets, smartphones, and accessories at
-            unbeatable prices.
-          </p>
+          <br />
+          <div className="flex flex-col md:flex-row items-center gap-3 text-white text-sm font-light">
+            <img className="w-28" src={assets.group_profiles} alt="Profiles" />
+            <p className="mt-2 text-sm md:text-base">
+              Explore the newest gadgets, smartphones, and accessories at
+              unbeatable prices.
+            </p>
+          </div>
         </div>
 
         <div className="relative w-1/2 h-full flex items-center justify-center">
