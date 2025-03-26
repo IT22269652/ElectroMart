@@ -8,50 +8,83 @@ const Feedback = () => {
   const [contactNo, setContactNo] = useState("");
   const [description, setDescription] = useState("");
   const [errors, setErrors] = useState({});
+  const [touched, setTouched] = useState({
+    name: false,
+    email: false,
+    contactNo: false,
+    description: false,
+  });
+
+  const validateField = (fieldName, value) => {
+    let error = "";
+
+    switch (fieldName) {
+      case "name":
+        if (!value.trim()) {
+          error = "Name is required";
+        } else if (value.length < 2) {
+          error = "Name must be at least 2 characters long";
+        } else if (value.length > 50) {
+          error = "Name must be less than 50 characters";
+        } else if (!/^[A-Za-z\s]+$/.test(value)) {
+          error = "Name should contain only alphabets and spaces";
+        }
+        break;
+      case "email":
+        if (!value.trim()) {
+          error = "Email is required";
+        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+          error = "Invalid email format";
+        }
+        break;
+      case "contactNo":
+        if (!value.trim()) {
+          error = "Contact number is required";
+        } else if (!/^\d+$/.test(value)) {
+          error = "Contact number should contain only digits";
+        } else if (value.length < 10) {
+          error = "Contact number must be only 10 digits";
+        }
+        break;
+      case "description":
+        if (!value.trim()) {
+          error = "Description is required";
+        } else if (value.length < 10) {
+          error = "Description must be at least 10 characters long";
+        } else if (value.length > 500) {
+          error = "Description must be less than 500 characters";
+        }
+        break;
+      default:
+        break;
+    }
+
+    return error;
+  };
+
+  const handleBlur = (fieldName) => (e) => {
+    setTouched({ ...touched, [fieldName]: true });
+    const error = validateField(fieldName, e.target.value);
+    setErrors({ ...errors, [fieldName]: error });
+  };
 
   const validateForm = () => {
-    const newErrors = {};
-
-    // Name validation
-    if (!name.trim()) {
-      newErrors.name = "Name is required";
-    } else if (name.length < 2) {
-      newErrors.name = "Name must be at least 2 characters long";
-    } else if (name.length > 50) {
-      newErrors.name = "Name must be less than 50 characters";
-    } else if (!/^[A-Za-z\s]+$/.test(name)) {
-      newErrors.name = "Name should contain only alphabets and spaces";
-    }
-
-    // Email validation
-    if (!email.trim()) {
-      newErrors.email = "Email is required";
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      newErrors.email = "Invalid email format";
-    }
-
-    // Contact Number validation
-    if (!contactNo.trim()) {
-      newErrors.contactNo = "Contact number is required";
-    } else if (!/^\d+$/.test(contactNo)) {
-      newErrors.contactNo = "Contact number should contain only digits";
-    } else if (contactNo.length < 10) {
-      newErrors.contactNo = "Contact number must be at least 10 digits long";
-    } else if (contactNo.length > 15) {
-      newErrors.contactNo = "Contact number must be less than 15 digits";
-    }
-
-    // Description validation
-    if (!description.trim()) {
-      newErrors.description = "Description is required";
-    } else if (description.length < 10) {
-      newErrors.description = "Description must be at least 10 characters long";
-    } else if (description.length > 500) {
-      newErrors.description = "Description must be less than 500 characters";
-    }
+    const newErrors = {
+      name: validateField("name", name),
+      email: validateField("email", email),
+      contactNo: validateField("contactNo", contactNo),
+      description: validateField("description", description),
+    };
 
     setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+    setTouched({
+      name: true,
+      email: true,
+      contactNo: true,
+      description: true,
+    });
+
+    return !Object.values(newErrors).some((error) => error);
   };
 
   const handleSubmit = async (e) => {
@@ -106,10 +139,11 @@ const Feedback = () => {
               type="text"
               placeholder="Enter your name"
               onChange={(e) => setName(e.target.value)}
+              onBlur={handleBlur("name")}
               value={name}
               required
             />
-            {errors.name && (
+            {touched.name && errors.name && (
               <p className="text-red-500 text-sm mt-1">{errors.name}</p>
             )}
           </div>
@@ -121,10 +155,11 @@ const Feedback = () => {
               type="email"
               placeholder="Enter your email"
               onChange={(e) => setEmail(e.target.value)}
+              onBlur={handleBlur("email")}
               value={email}
               required
             />
-            {errors.email && (
+            {touched.email && errors.email && (
               <p className="text-red-500 text-sm mt-1">{errors.email}</p>
             )}
           </div>
@@ -136,10 +171,11 @@ const Feedback = () => {
               type="text"
               placeholder="Enter your contact number"
               onChange={(e) => setContactNo(e.target.value)}
+              onBlur={handleBlur("contactNo")}
               value={contactNo}
               required
             />
-            {errors.contactNo && (
+            {touched.contactNo && errors.contactNo && (
               <p className="text-red-500 text-sm mt-1">{errors.contactNo}</p>
             )}
           </div>
@@ -150,10 +186,11 @@ const Feedback = () => {
               className="w-full p-3 mt-1 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none resize-none h-28"
               placeholder="Write your feedback here..."
               onChange={(e) => setDescription(e.target.value)}
+              onBlur={handleBlur("description")}
               value={description}
               required
             />
-            {errors.description && (
+            {touched.description && errors.description && (
               <p className="text-red-500 text-sm mt-1">{errors.description}</p>
             )}
           </div>

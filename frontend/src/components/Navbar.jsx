@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { assets } from "../assets/assets";
 import { NavLink, useNavigate } from "react-router-dom";
 import { AuthContext } from "../components/AuthContext";
@@ -9,6 +9,15 @@ const Navbar = () => {
   const { isLoggedIn, logout } = useContext(AuthContext);
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
+  const [isListening, setIsListening] = useState(false);
+  const [browserSupportsSpeech, setBrowserSupportsSpeech] = useState(false);
+
+  // Check if browser supports speech recognition
+  useEffect(() => {
+    setBrowserSupportsSpeech(
+      "webkitSpeechRecognition" in window || "SpeechRecognition" in window
+    );
+  }, []);
 
   // Enhanced search data with categories and icons
   const searchData = [
@@ -43,6 +52,49 @@ const Navbar = () => {
       icon: "🛒",
     },
   ];
+
+  // Initialize speech recognition
+  const startVoiceSearch = () => {
+    if (!browserSupportsSpeech) {
+      alert(
+        "Your browser doesn't support speech recognition. Try Chrome or Edge."
+      );
+      return;
+    }
+
+    const SpeechRecognition =
+      window.SpeechRecognition || window.webkitSpeechRecognition;
+    const recognition = new SpeechRecognition();
+
+    recognition.continuous = false;
+    recognition.interimResults = false;
+    recognition.lang = "en-US";
+
+    recognition.onstart = () => {
+      setIsListening(true);
+    };
+
+    recognition.onresult = (event) => {
+      const transcript = event.results[0][0].transcript;
+      setSearchQuery(transcript);
+      handleSearch({ target: { value: transcript } });
+      setIsListening(false);
+    };
+
+    recognition.onerror = (event) => {
+      console.error("Speech recognition error", event.error);
+      setIsListening(false);
+      if (event.error === "not-allowed") {
+        alert("Please allow microphone access to use voice search.");
+      }
+    };
+
+    recognition.onend = () => {
+      setIsListening(false);
+    };
+
+    recognition.start();
+  };
 
   // Enhanced search handler with debouncing
   const handleSearch = (e) => {
@@ -80,9 +132,10 @@ const Navbar = () => {
         className="w-44 cursor-pointer hover:scale-105 transition-transform"
         src={assets.logo1}
         alt="Logo"
+        onClick={() => navigate("/")}
       />
 
-      {/* Enhanced Search Bar */}
+      {/* Enhanced Search Bar with Voice Search */}
       <div className="relative w-full max-w-md mx-4">
         <div className="relative">
           <input
@@ -90,11 +143,51 @@ const Navbar = () => {
             placeholder="Explore our site..."
             value={searchQuery}
             onChange={handleSearch}
-            className="w-full px-5 py-2.5 pl-12 bg-white border border-gray-200 rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-300"
+            className="w-full px-5 py-2.5 pl-12 pr-16 bg-white border border-gray-200 rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-300"
           />
           <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">
             🔍
           </span>
+          {browserSupportsSpeech && (
+            <button
+              onClick={startVoiceSearch}
+              className={`absolute right-4 top-1/2 -translate-y-1/2 ${
+                isListening
+                  ? "text-red-500 animate-pulse"
+                  : "text-gray-400 hover:text-blue-500"
+              }`}
+              type="button"
+              aria-label={isListening ? "Stop listening" : "Start voice search"}
+            >
+              {isListening ? (
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M7 4a3 3 0 016 0v4a3 3 0 11-6 0V4zm4 10.93A7.001 7.001 0 0017 8a1 1 0 10-2 0A5 5 0 015 8a1 1 0 00-2 0 7.001 7.001 0 006 6.93V17H6a1 1 0 100 2h8a1 1 0 100-2h-3v-2.07z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+              ) : (
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M7 4a3 3 0 016 0v4a3 3 0 11-6 0V4zm4 10.93A7.001 7.001 0 0017 8a1 1 0 10-2 0A5 5 0 015 8a1 1 0 00-2 0 7.001 7.001 0 006 6.93V17H6a1 1 0 100 2h8a1 1 0 100-2h-3v-2.07z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+              )}
+            </button>
+          )}
         </div>
 
         {/* Animated Search Results Dropdown */}
@@ -117,6 +210,7 @@ const Navbar = () => {
         )}
       </div>
 
+      {/* Rest of your Navbar code remains the same */}
       {/* Navigation Links */}
       <ul className="hidden md:flex items-center gap-6 font-medium">
         <NavLink
@@ -195,11 +289,43 @@ const Navbar = () => {
           alt="Menu"
         />
 
-        {/* Mobile Menu - Same as before but with updated styling */}
+        {/* Mobile Menu */}
         {showMenu && (
           <div className="fixed top-0 right-0 w-full h-screen bg-white z-50 p-6 flex flex-col items-center animate-slideIn">
-            {/* Mobile menu content remains similar but with updated styles */}
-            {/* ... Add the mobile menu content here with similar styling enhancements ... */}
+            {/* Add voice search to mobile menu if needed */}
+            <button
+              onClick={startVoiceSearch}
+              className={`flex items-center gap-2 mb-4 ${
+                isListening ? "text-red-500" : "text-blue-500"
+              }`}
+            >
+              {isListening ? (
+                <>
+                  <span className="relative flex h-3 w-3">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
+                  </span>
+                  Listening...
+                </>
+              ) : (
+                <>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-5 w-5"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M7 4a3 3 0 016 0v4a3 3 0 11-6 0V4zm4 10.93A7.001 7.001 0 0017 8a1 1 0 10-2 0A5 5 0 015 8a1 1 0 00-2 0 7.001 7.001 0 006 6.93V17H6a1 1 0 100 2h8a1 1 0 100-2h-3v-2.07z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                  Voice Search
+                </>
+              )}
+            </button>
+            {/* Rest of mobile menu content */}
           </div>
         )}
       </div>
