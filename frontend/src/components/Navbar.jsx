@@ -2,6 +2,7 @@ import React, { useState, useContext, useEffect } from "react";
 import { assets } from "../assets/assets";
 import { NavLink, useNavigate } from "react-router-dom";
 import { AuthContext } from "../components/AuthContext";
+import VoiceNavigation from "./VoiceNavigation";
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -135,82 +136,86 @@ const Navbar = () => {
         onClick={() => navigate("/")}
       />
 
-      {/* Enhanced Search Bar with Voice Search */}
-      <div className="relative w-full max-w-md mx-4">
-        <div className="relative">
-          <input
-            type="text"
-            placeholder="Explore our site..."
-            value={searchQuery}
-            onChange={handleSearch}
-            className="w-full px-5 py-2.5 pl-12 pr-16 bg-white border border-gray-200 rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-300"
-          />
-          <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">
-            🔍
-          </span>
-          {browserSupportsSpeech && (
-            <button
-              onClick={startVoiceSearch}
-              className={`absolute right-4 top-1/2 -translate-y-1/2 ${
-                isListening
-                  ? "text-red-500 animate-pulse"
-                  : "text-gray-400 hover:text-blue-500"
-              }`}
-              type="button"
-              aria-label={isListening ? "Stop listening" : "Start voice search"}
-            >
-              {isListening ? (
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-5 w-5"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
+      {/* Search Bar and Voice Navigation */}
+      <div className="flex items-center gap-2">
+        <div className="relative w-full max-w-md mx-4">
+          <div className="relative">
+            <input
+              type="text"
+              placeholder="Explore our site..."
+              value={searchQuery}
+              onChange={handleSearch}
+              className="w-full px-5 py-2.5 pl-12 pr-16 bg-white border border-gray-200 rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-300"
+            />
+            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">
+              🔍
+            </span>
+            {browserSupportsSpeech && (
+              <button
+                onClick={startVoiceSearch}
+                className={`absolute right-4 top-1/2 -translate-y-1/2 ${
+                  isListening
+                    ? "text-red-500 animate-pulse"
+                    : "text-gray-400 hover:text-blue-500"
+                }`}
+                type="button"
+                aria-label={
+                  isListening ? "Stop listening" : "Start voice search"
+                }
+              >
+                {isListening ? (
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-5 w-5"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M7 4a3 3 0 016 0v4a3 3 0 11-6 0V4zm4 10.93A7.001 7.001 0 0017 8a1 1 0 10-2 0A5 5 0 015 8a1 1 0 00-2 0 7.001 7.001 0 006 6.93V17H6a1 1 0 100 2h8a1 1 0 100-2h-3v-2.07z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                ) : (
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-5 w-5"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M7 4a3 3 0 016 0v4a3 3 0 11-6 0V4zm4 10.93A7.001 7.001 0 0017 8a1 1 0 10-2 0A5 5 0 015 8a1 1 0 00-2 0 7.001 7.001 0 006 6.93V17H6a1 1 0 100 2h8a1 1 0 100-2h-3v-2.07z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                )}
+              </button>
+            )}
+          </div>
+
+          {/* Animated Search Results Dropdown */}
+          {searchResults.length > 0 && (
+            <div className="absolute top-full left-0 w-full bg-white border border-gray-100 rounded-xl mt-2 shadow-xl z-20 animate-fadeIn">
+              {searchResults.map((result) => (
+                <div
+                  key={result.id}
+                  onClick={() => handleSearchItemClick(result.path)}
+                  className="flex items-center gap-3 px-4 py-3 hover:bg-blue-50 cursor-pointer transition-colors duration-200 border-b border-gray-100 last:border-b-0"
                 >
-                  <path
-                    fillRule="evenodd"
-                    d="M7 4a3 3 0 016 0v4a3 3 0 11-6 0V4zm4 10.93A7.001 7.001 0 0017 8a1 1 0 10-2 0A5 5 0 015 8a1 1 0 00-2 0 7.001 7.001 0 006 6.93V17H6a1 1 0 100 2h8a1 1 0 100-2h-3v-2.07z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-              ) : (
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-5 w-5"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M7 4a3 3 0 016 0v4a3 3 0 11-6 0V4zm4 10.93A7.001 7.001 0 0017 8a1 1 0 10-2 0A5 5 0 015 8a1 1 0 00-2 0 7.001 7.001 0 006 6.93V17H6a1 1 0 100 2h8a1 1 0 100-2h-3v-2.07z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-              )}
-            </button>
+                  <span className="text-lg">{result.icon}</span>
+                  <div>
+                    <p className="text-gray-800 font-medium">{result.title}</p>
+                    <p className="text-xs text-gray-500">{result.category}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
           )}
         </div>
-
-        {/* Animated Search Results Dropdown */}
-        {searchResults.length > 0 && (
-          <div className="absolute top-full left-0 w-full bg-white border border-gray-100 rounded-xl mt-2 shadow-xl z-20 animate-fadeIn">
-            {searchResults.map((result) => (
-              <div
-                key={result.id}
-                onClick={() => handleSearchItemClick(result.path)}
-                className="flex items-center gap-3 px-4 py-3 hover:bg-blue-50 cursor-pointer transition-colors duration-200 border-b border-gray-100 last:border-b-0"
-              >
-                <span className="text-lg">{result.icon}</span>
-                <div>
-                  <p className="text-gray-800 font-medium">{result.title}</p>
-                  <p className="text-xs text-gray-500">{result.category}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
+        <VoiceNavigation />
       </div>
 
-      {/* Rest of your Navbar code remains the same */}
       {/* Navigation Links */}
       <ul className="hidden md:flex items-center gap-6 font-medium">
         <NavLink
@@ -292,7 +297,6 @@ const Navbar = () => {
         {/* Mobile Menu */}
         {showMenu && (
           <div className="fixed top-0 right-0 w-full h-screen bg-white z-50 p-6 flex flex-col items-center animate-slideIn">
-            {/* Add voice search to mobile menu if needed */}
             <button
               onClick={startVoiceSearch}
               className={`flex items-center gap-2 mb-4 ${
@@ -325,7 +329,89 @@ const Navbar = () => {
                 </>
               )}
             </button>
-            {/* Rest of mobile menu content */}
+            <button
+              onClick={() => {
+                setShowMenu(false);
+                navigate("/");
+              }}
+              className="w-full py-3 border-b border-gray-200 text-left px-4 hover:bg-gray-100"
+            >
+              Home
+            </button>
+            <button
+              onClick={() => {
+                setShowMenu(false);
+                navigate("/feedback");
+              }}
+              className="w-full py-3 border-b border-gray-200 text-left px-4 hover:bg-gray-100"
+            >
+              Feedback
+            </button>
+            <button
+              onClick={() => {
+                setShowMenu(false);
+                navigate("/about");
+              }}
+              className="w-full py-3 border-b border-gray-200 text-left px-4 hover:bg-gray-100"
+            >
+              About
+            </button>
+            <button
+              onClick={() => {
+                setShowMenu(false);
+                navigate("/contact");
+              }}
+              className="w-full py-3 border-b border-gray-200 text-left px-4 hover:bg-gray-100"
+            >
+              Contact
+            </button>
+            {isLoggedIn ? (
+              <>
+                <button
+                  onClick={() => {
+                    setShowMenu(false);
+                    navigate("/my-profile");
+                  }}
+                  className="w-full py-3 border-b border-gray-200 text-left px-4 hover:bg-gray-100"
+                >
+                  My Profile
+                </button>
+                <button
+                  onClick={() => {
+                    setShowMenu(false);
+                    navigate("/my-orders");
+                  }}
+                  className="w-full py-3 border-b border-gray-200 text-left px-4 hover:bg-gray-100"
+                >
+                  My Orders
+                </button>
+                <button
+                  onClick={() => {
+                    logout();
+                    setShowMenu(false);
+                  }}
+                  className="w-full py-3 text-left px-4 hover:bg-gray-100 text-red-500"
+                >
+                  Logout
+                </button>
+              </>
+            ) : (
+              <button
+                onClick={() => {
+                  setShowMenu(false);
+                  navigate("/login");
+                }}
+                className="w-full py-3 bg-blue-500 text-white rounded-lg mt-4"
+              >
+                Sign In
+              </button>
+            )}
+            <button
+              onClick={() => setShowMenu(false)}
+              className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
+            >
+              ✕
+            </button>
           </div>
         )}
       </div>
