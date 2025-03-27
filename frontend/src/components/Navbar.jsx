@@ -163,7 +163,6 @@ const Navbar = () => {
                 >
                   My Profile
                 </p>
-
                 <p
                   onClick={logout}
                   className="hover:text-blue-500 cursor-pointer transition-colors"
@@ -227,6 +226,15 @@ const Navbar = () => {
             >
               Contact
             </button>
+            <button
+              onClick={() => {
+                setShowMenu(false);
+                navigate("/admin-login");
+              }}
+              className="w-full py-3 border-b border-gray-200 text-left px-4 hover:bg-gray-100"
+            >
+              Admin Login
+            </button>
             {isLoggedIn ? (
               <>
                 <button
@@ -265,17 +273,6 @@ const Navbar = () => {
                 }}
                 className="w-full py-3 bg-blue-500 text-white rounded-lg mt-4"
               >
-
-                CONTACT
-              </NavLink>
-              <NavLink
-                onClick={() => setShowMenu(false)}
-                to="/admin-login"
-                className="px-4 py-2 rounded hover:text-primary"
-              >
-                ADMIN LOGIN
-              </NavLink>
-            </ul>
                 Sign In
               </button>
             )}
@@ -285,7 +282,6 @@ const Navbar = () => {
             >
               ✕
             </button>
-
           </div>
         )}
       </div>
