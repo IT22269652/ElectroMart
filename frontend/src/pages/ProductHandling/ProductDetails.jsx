@@ -10,7 +10,7 @@ const ProductDetails = () => {
     {
       id: "1",
       name: "Smart TV",
-      price: "$499",
+      price: "Price = $499",
       originalPrice: "$799",
       discount: "37% Off",
       warranty: "2 Years",
@@ -80,6 +80,367 @@ const ProductDetails = () => {
           assets.SonyTV011,
           assets.SonyTV012,
           assets.SonyTV013,
+      ],
+    },
+
+    {
+      id: "5",
+      name: "DSLR Camera",
+      price: "$499",
+      originalPrice: "$799",
+      discount: "37% Off",
+      warranty: "2 Years",
+      offers: [
+        "Assured Cashback upto $50 on paying with Credit Cards.",
+        "Flat 10% Instant Discount Up to $100 with HDFC Credit Card.",
+      ],
+      images: [
+          assets.camera01,
+          assets.camera02,
+          assets.camera03,
+          assets.camera04,
+      ],
+    },
+
+    {
+      id: "6",
+      name: "Mirrorless Camera",
+      price: "$499",
+      originalPrice: "$799",
+      discount: "37% Off",
+      warranty: "2 Years",
+      offers: [
+        "Assured Cashback upto $50 on paying with Credit Cards.",
+        "Flat 10% Instant Discount Up to $100 with HDFC Credit Card.",
+      ],
+      images: [
+          assets.camera02,
+          assets.camera021,
+          assets.camera021,
+          assets.camera031,
+      ],
+    },
+
+    {
+      id: "7",
+      name: "Action Camera",
+      price: "$499",
+      originalPrice: "$799",
+      discount: "37% Off",
+      warranty: "2 Years",
+      offers: [
+        "Assured Cashback upto $50 on paying with Credit Cards.",
+        "Flat 10% Instant Discount Up to $100 with HDFC Credit Card.",
+      ],
+      images: [
+          assets.camera03,
+          assets.camera031,
+          assets.camera032,
+          assets.camera01,
+      ],
+    },
+
+    {
+      id: "8",
+      name: "Instant Camera",
+      price: "$499",
+      originalPrice: "$799",
+      discount: "37% Off",
+      warranty: "2 Years",
+      offers: [
+        "Assured Cashback upto $50 on paying with Credit Cards.",
+        "Flat 10% Instant Discount Up to $100 with HDFC Credit Card.",
+      ],
+      images: [
+          assets.camera04,
+          assets.camera041,
+          assets.camera042,
+          assets.camera043,
+      ],
+    },
+
+    {
+      id: "9",
+      name: "Gaming laptop",
+      price: "$499",
+      originalPrice: "$799",
+      discount: "37% Off",
+      warranty: "2 Years",
+      offers: [
+        "Assured Cashback upto $50 on paying with Credit Cards.",
+        "Flat 10% Instant Discount Up to $100 with HDFC Credit Card.",
+      ],
+      images: [
+          assets.laptop01,
+          assets.laptop011,
+          assets.laptop012,
+          assets.laptop013,
+      ],
+    },
+
+    {
+      id: "10",
+      name: "Ultrabook Laptop",
+      price: "$499",
+      originalPrice: "$799",
+      discount: "37% Off",
+      warranty: "2 Years",
+      offers: [
+        "Assured Cashback upto $50 on paying with Credit Cards.",
+        "Flat 10% Instant Discount Up to $100 with HDFC Credit Card.",
+      ],
+      images: [
+          assets.laptop02,
+          assets.laptop021,
+          assets.laptop022,
+          assets.laptop023,
+      ],
+    },
+
+    {
+      id: "11",
+      name: "2-in-1 Laptop",
+      price: "$499",
+      originalPrice: "$799",
+      discount: "37% Off",
+      warranty: "2 Years",
+      offers: [
+        "Assured Cashback upto $50 on paying with Credit Cards.",
+        "Flat 10% Instant Discount Up to $100 with HDFC Credit Card.",
+      ],
+      images: [
+          assets.laptop03,
+          assets.laptop031,
+          assets.laptop032,
+          assets.laptop01,
+      ],
+    },
+
+    {
+      id: "12",
+      name: "2-in-1 Laptop",
+      price: "$499",
+      originalPrice: "$799",
+      discount: "37% Off",
+      warranty: "2 Years",
+      offers: [
+        "Assured Cashback upto $50 on paying with Credit Cards.",
+        "Flat 10% Instant Discount Up to $100 with HDFC Credit Card.",
+      ],
+      images: [
+          assets.laptop04,
+          assets.laptop041,
+          assets.laptop042,
+          assets.laptop043,
+      ],
+    },
+
+    {
+      id: "15",
+      name: "iphone 13",
+      price: "$499",
+      originalPrice: "$799",
+      discount: "37% Off",
+      warranty: "2 Years",
+      offers: [
+        "Assured Cashback upto $50 on paying with Credit Cards.",
+        "Flat 10% Instant Discount Up to $100 with HDFC Credit Card.",
+      ],
+      images: [
+          assets.iphone03,
+          assets.iphone031,
+          assets.iphone033,
+          assets.iphone03,
+      ],
+    },
+
+    {
+      id: "16",
+      name: "iphone 14 Pro",
+      price: "$499",
+      originalPrice: "$799",
+      discount: "37% Off",
+      warranty: "2 Years",
+      offers: [
+        "Assured Cashback upto $50 on paying with Credit Cards.",
+        "Flat 10% Instant Discount Up to $100 with HDFC Credit Card.",
+      ],
+      images: [
+          assets.iphone04,
+          assets.iphone041,
+          assets.iphone042,
+          assets.iphone043,
+      ],
+    },
+
+    {
+      id: "17",
+      name: "Wireless Earbuds",
+      price: "$499",
+      originalPrice: "$799",
+      discount: "37% Off",
+      warranty: "2 Years",
+      offers: [
+        "Assured Cashback upto $50 on paying with Credit Cards.",
+        "Flat 10% Instant Discount Up to $100 with HDFC Credit Card.",
+      ],
+      images: [
+          assets.earbud1,
+          assets.earbud2,
+          assets.earbud1,
+          assets.earbud3,
+      ],
+    },
+
+    {
+      id: "18",
+      name: "Smart Watch",
+      price: "$499",
+      originalPrice: "$799",
+      discount: "37% Off",
+      warranty: "2 Years",
+      offers: [
+        "Assured Cashback upto $50 on paying with Credit Cards.",
+        "Flat 10% Instant Discount Up to $100 with HDFC Credit Card.",
+      ],
+      images: [
+          assets.smartwatch,
+          assets.smartwatch2,
+          assets.smartwatch3,
+          assets.smartwatch,
+      ],
+    },
+
+    {
+      id: "19",
+      name: "Blutooth Speaker",
+      price: "$499",
+      originalPrice: "$799",
+      discount: "37% Off",
+      warranty: "2 Years",
+      offers: [
+        "Assured Cashback upto $50 on paying with Credit Cards.",
+        "Flat 10% Instant Discount Up to $100 with HDFC Credit Card.",
+      ],
+      images: [
+          assets.speakers2,
+          assets.speakers3,
+          assets.speakers2,
+          assets.speakers3,
+      ],
+    },
+
+    {
+      id: "20",
+      name: "External Hard Drive",
+      price: "$499",
+      originalPrice: "$799",
+      discount: "37% Off",
+      warranty: "2 Years",
+      offers: [
+        "Assured Cashback upto $50 on paying with Credit Cards.",
+        "Flat 10% Instant Discount Up to $100 with HDFC Credit Card.",
+      ],
+      images: [
+          assets.externalharddrive1,
+          assets.externalharddrive2,
+          assets.externalharddrive3,
+          assets.externalharddrive1,
+      ],
+    },
+
+    {
+      id: "21",
+      name: "Drone",
+      price: "$499",
+      originalPrice: "$799",
+      discount: "37% Off",
+      warranty: "2 Years",
+      offers: [
+        "Assured Cashback upto $50 on paying with Credit Cards.",
+        "Flat 10% Instant Discount Up to $100 with HDFC Credit Card.",
+      ],
+      images: [
+          assets.drone2,
+          assets.drone1,
+          assets.drone3,
+          assets.drone1,
+      ],
+    },
+
+    {
+      id: "22",
+      name: "VR HeadSet",
+      price: "$499",
+      originalPrice: "$799",
+      discount: "37% Off",
+      warranty: "2 Years",
+      offers: [
+        "Assured Cashback upto $50 on paying with Credit Cards.",
+        "Flat 10% Instant Discount Up to $100 with HDFC Credit Card.",
+      ],
+      images: [
+          assets.VRheadset1,
+          assets.VRheadset2,
+          assets.VRheadset3,
+          assets.VRheadset1,
+      ],
+    },
+
+    {
+      id: "23",
+      name: "Projector",
+      price: "$499",
+      originalPrice: "$799",
+      discount: "37% Off",
+      warranty: "2 Years",
+      offers: [
+        "Assured Cashback upto $50 on paying with Credit Cards.",
+        "Flat 10% Instant Discount Up to $100 with HDFC Credit Card.",
+      ],
+      images: [
+          assets.projector1,
+          assets.projector2,
+          assets.projector3,
+          assets.projector1,
+      ],
+    },
+
+    {
+      id: "24",
+      name: "Home Theater System",
+      price: "$499",
+      originalPrice: "$799",
+      discount: "37% Off",
+      warranty: "2 Years",
+      offers: [
+        "Assured Cashback upto $50 on paying with Credit Cards.",
+        "Flat 10% Instant Discount Up to $100 with HDFC Credit Card.",
+      ],
+      images: [
+          assets.hometheatersystem1,
+          assets.hometheatersystem2,
+          assets.hometheatersystem3,
+          assets.hometheatersystem1,
+      ],
+    },
+
+    {
+      id: "14",
+      name: "iphone 11",
+      price: "$499",
+      originalPrice: "$799",
+      discount: "37% Off",
+      warranty: "2 Years",
+      offers: [
+        "Assured Cashback upto $50 on paying with Credit Cards.",
+        "Flat 10% Instant Discount Up to $100 with HDFC Credit Card.",
+      ],
+      images: [
+          assets.iphone02,
+          assets.iphone021,
+          assets.iphone02,
+          assets.iphone021,
       ],
     },
     // Add more products as needed

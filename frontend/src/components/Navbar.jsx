@@ -45,6 +45,9 @@ const Navbar = () => {
         <NavLink to="/contact" className="hover:text-primary">
           CONTACT
         </NavLink>
+        <NavLink to="/admin-login" className="hover:text-primary">
+          ADMIN LOGIN
+        </NavLink>
       </ul>
 
       {/* User Profile / Login Button */}
@@ -146,6 +149,13 @@ const Navbar = () => {
                 className="px-4 py-2 rounded hover:text-primary"
               >
                 CONTACT
+              </NavLink>
+              <NavLink
+                onClick={() => setShowMenu(false)}
+                to="/admin-login"
+                className="px-4 py-2 rounded hover:text-primary"
+              >
+                ADMIN LOGIN
               </NavLink>
             </ul>
           </div>

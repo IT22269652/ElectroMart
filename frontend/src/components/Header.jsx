@@ -35,14 +35,14 @@ const Header = () => {
     { id: "14", name: "iPhone 11", price: "$799", image: assets.iphone02, category: "iPhone" },
     { id: "15", name: "iPhone 13", price: "$499", image: assets.iphone03, category: "iPhone" },
     { id: "16", name: "iPhone 14 Pro", price: "$699", image: assets.iphone04, category: "iPhone" },
-    { id: "17", name: "Wireless Earbuds", price: "$199", image: assets.wirelessEarbuds, category: "Other Items" },
-    { id: "18", name: "Smart Watch", price: "$299", image: assets.smartWatch, category: "Other Items" },
-    { id: "19", name: "Bluetooth Speaker", price: "$149", image: assets.bluetoothSpeaker, category: "Other Items" },
-    { id: "20", name: "External Hard Drive", price: "$99", image: assets.externalHardDrive, category: "Other Items" },
-    { id: "21", name: "Drone", price: "$499", image: assets.drone, category: "Other Items" },
-    { id: "22", name: "VR Headset", price: "$299", image: assets.vrHeadset, category: "Other Items" },
-    { id: "23", name: "Projector", price: "$399", image: assets.projector, category: "Other Items" },
-    { id: "24", name: "Home Theater System", price: "$599", image: assets.homeTheater, category: "Other Items" },
+    { id: "17", name: "Wireless Earbuds", price: "$199", image: assets.earbud1, category: "Other Items" },
+    { id: "18", name: "Smart Watch", price: "$299", image: assets.smartwatch, category: "Other Items" },
+    { id: "19", name: "Bluetooth Speaker", price: "$149", image: assets.Bluetoothspeakers1, category: "Other Items" },
+    { id: "20", name: "External Hard Drive", price: "$99", image: assets.externalharddrive1, category: "Other Items" },
+    { id: "21", name: "Drone", price: "$499", image: assets.drone1, category: "Other Items" },
+    { id: "22", name: "VR Headset", price: "$299", image: assets.VRheadset1, category: "Other Items" },
+    { id: "23", name: "Projector", price: "$399", image: assets.projector1, category: "Other Items" },
+    { id: "24", name: "Home Theater System", price: "$599", image: assets.hometheatersystem1, category: "Other Items" },
   ];
 
   const filteredProducts = selectedCategories.length > 0

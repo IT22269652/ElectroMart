@@ -1,6 +1,6 @@
 import React from "react";
 import { Route, Routes } from "react-router-dom";
-import { AuthProvider } from "./components/AuthContext"; // Import AuthProvider
+import { AuthProvider } from "./components/AuthContext";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import About from "./pages/About";
@@ -14,9 +14,16 @@ import Feedbackdetails from "./pages/Feedbackdetails";
 import Updatefeedback from "./pages/Updatefeedback";
 import ProductDetails from "./pages/ProductHandling/ProductDetails";
 import Header from "./components/Header";
+import AdminLogin from "./pages/ProductHandling/AdminLogin";
+import AdminDashboard from "./pages/ProductHandling/AdminDashboard";
+import ProductForm from "./pages/ProductHandling/ProductForm";
+import Admin from "./pages/ProductHandling/Admin";
 
 const App = () => {
+  
+  
   return (
+    
     <AuthProvider>
       {" "}
       {/* Wrap the app with AuthProvider */}
@@ -38,6 +45,14 @@ const App = () => {
             <Route path="/productdetails" element={ProductDetails} />
             <Route path="/" element={<Header />} />
             <Route path="/product/:productId" element={<ProductDetails />} />
+            <Route path="/admin-login" element={<AdminLogin />} />
+            <Route path="/admin" element={<Admin />} />
+            <Route 
+                path="/admin-dashboard" 
+                element={<AdminDashboard/>
+               } 
+            />
+            <Route path="/admin/add-items" element={<ProductForm />} />
           </Routes>
         </div>
         <Footer />
