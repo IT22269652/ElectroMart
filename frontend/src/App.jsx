@@ -1,6 +1,7 @@
+import "regenerator-runtime/runtime";
 import React from "react";
 import { Route, Routes } from "react-router-dom";
-import { AuthProvider } from "./components/AuthContext"; // Import AuthProvider
+import { AuthProvider } from "./components/AuthContext";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import About from "./pages/About";
@@ -16,13 +17,9 @@ import Updatefeedback from "./pages/Updatefeedback";
 const App = () => {
   return (
     <AuthProvider>
-      {" "}
-      {/* Wrap the app with AuthProvider */}
       <div className="mx-4 sm:mx-[10%] flex flex-col min-h-screen">
         <Navbar />
         <div className="flex-grow">
-          {" "}
-          {/* Ensures footer stays at the bottom */}
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
