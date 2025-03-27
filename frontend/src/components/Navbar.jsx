@@ -250,7 +250,7 @@ const Navbar = () => {
           <div className="flex items-center gap-2 cursor-pointer group relative">
             <img
               className="w-9 rounded-full hover:scale-110 transition-transform"
-              src={assets.upload_area}
+              src={assets.profile_pic}
               alt="Profile"
             />
             <img className="w-2.5" src={assets.dropdown_icon} alt="Dropdown" />
@@ -262,12 +262,7 @@ const Navbar = () => {
                 >
                   My Profile
                 </p>
-                <p
-                  onClick={() => navigate("my-orders")}
-                  className="hover:text-blue-500 cursor-pointer transition-colors"
-                >
-                  My Orders
-                </p>
+
                 <p
                   onClick={logout}
                   className="hover:text-blue-500 cursor-pointer transition-colors"
