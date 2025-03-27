@@ -141,6 +141,9 @@ const Navbar = () => {
         >
           CONTACT
         </NavLink>
+        <NavLink to="/admin-login" className="hover:text-primary">
+          ADMIN LOGIN
+        </NavLink>
       </ul>
 
       <div className="flex items-center gap-4">
@@ -262,6 +265,17 @@ const Navbar = () => {
                 }}
                 className="w-full py-3 bg-blue-500 text-white rounded-lg mt-4"
               >
+
+                CONTACT
+              </NavLink>
+              <NavLink
+                onClick={() => setShowMenu(false)}
+                to="/admin-login"
+                className="px-4 py-2 rounded hover:text-primary"
+              >
+                ADMIN LOGIN
+              </NavLink>
+            </ul>
                 Sign In
               </button>
             )}
@@ -271,6 +285,7 @@ const Navbar = () => {
             >
               ✕
             </button>
+
           </div>
         )}
       </div>
