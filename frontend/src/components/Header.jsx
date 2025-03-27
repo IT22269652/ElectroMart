@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { assets } from "../assets/assets";
 
@@ -9,6 +9,10 @@ const Header = () => {
   const [selectedCategories, setSelectedCategories] = useState([]);
   const navigate = useNavigate();
 
+  // Create a reference to the Featured Products section
+  const featuredProductsRef = useRef(null);
+
+  // Slideshow effect for the header images
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length);
@@ -180,23 +184,41 @@ const Header = () => {
     navigate(`/product/${productId}`);
   };
 
+  // Function to scroll to the Featured Products section
+  const scrollToFeaturedProducts = () => {
+    featuredProductsRef.current.scrollIntoView({ behavior: "smooth" });
+  };
+
   return (
     <div>
-      <div className="relative w-full h-80 md:h-96 lg:h-[400px] bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl flex items-center justify-between px-10 overflow-hidden">
-        <div className="text-white max-w-lg">
-          <h1 className="text-4xl md:text-5xl font-bold leading-tight">
+      {/* Header Section */}
+      <div className="relative w-full h-[450px] md:h-[500px] lg:h-[550px] bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl flex items-center justify-between px-8 md:px-12 lg:px-16 overflow-hidden">
+        {/* Left Side: Text and Call to Action */}
+        <div className="text-white max-w-md">
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight">
             🛒 Shop the Latest Electronics
           </h1>
-          <br />
-          <div className="flex flex-col md:flex-row items-center gap-3 text-white text-sm font-light">
-            <img className="w-28" src={assets.group_profiles} alt="Profiles" />
-            <p className="mt-2 text-sm md:text-base">
+          <div className="flex flex-col md:flex-row items-center gap-4 text-white text-sm font-light mt-4">
+            <img
+              className="w-24 md:w-28"
+              src={assets.group_profiles}
+              alt="Profiles"
+            />
+            <p className="mt-2 text-sm md:text-base lg:text-lg">
               Explore the newest gadgets, smartphones, and accessories at
               unbeatable prices.
             </p>
           </div>
+          {/* Shop Now button that scrolls to Featured Products */}
+          <button
+            className="mt-6 px-6 py-3 bg-white text-blue-600 font-semibold rounded-full shadow-md hover:bg-gray-100 transition duration-300"
+            onClick={scrollToFeaturedProducts}
+          >
+            Shop Now →
+          </button>
         </div>
 
+        {/* Right Side: Slideshow Images */}
         <div className="relative w-1/2 h-full flex items-center justify-center">
           {images.map((image, index) => (
             <img
@@ -211,6 +233,7 @@ const Header = () => {
         </div>
       </div>
 
+      {/* Category Section */}
       <div className="mt-8 text-center px-6">
         <h2 className="text-3xl font-bold text-gray-800">Find by Category</h2>
       </div>
@@ -236,7 +259,8 @@ const Header = () => {
         ))}
       </div>
 
-      <div className="mt-12 px-6">
+      {/* Featured Products Section with ref */}
+      <div className="mt-12 px-6" ref={featuredProductsRef}>
         <h2 className="text-3xl font-bold text-gray-800 text-center">
           {selectedCategories.length > 0
             ? `${selectedCategories.join(", ")} Products`

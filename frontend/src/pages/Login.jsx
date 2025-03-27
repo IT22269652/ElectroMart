@@ -17,82 +17,119 @@ const Login = () => {
   const navigate = useNavigate();
   const { login } = useContext(AuthContext);
 
+  const validateField = (name, value) => {
+    let error = "";
+
+    switch (name) {
+      case "email":
+        if (!value.trim()) {
+          error = "Email is required";
+        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+          error = "Invalid email format";
+        }
+        break;
+      case "password":
+        if (!value.trim()) {
+          error = "Password is required";
+        } else if (value.length < 8) {
+          error = "Password must be at least 8 characters long";
+        } else if (value.length > 20) {
+          error = "Password must be less than 20 characters";
+        }
+        break;
+      case "name":
+        if (state === "Sign Up") {
+          if (!value.trim()) {
+            error = "Name is required";
+          } else if (value.length < 2) {
+            error = "Name must be at least 2 characters long";
+          } else if (value.length > 50) {
+            error = "Name must be less than 50 characters";
+          } else if (!/^[A-Za-z\s]+$/.test(value)) {
+            error = "Name should contain only alphabets and spaces";
+          }
+        }
+        break;
+      case "contactNo":
+        if (state === "Sign Up") {
+          if (!value.trim()) {
+            error = "Contact number is required";
+          } else if (!/^\d+$/.test(value)) {
+            error = "Contact number should contain only digits";
+          } else if (value.length !== 10) {
+            error = "Contact number must be exactly 10 digits";
+          }
+        }
+        break;
+      case "address":
+        if (state === "Sign Up") {
+          if (!value.trim()) {
+            error = "Address is required";
+          } else if (value.length < 10) {
+            error = "Address must be at least 10 characters long";
+          } else if (value.length > 200) {
+            error = "Address must be less than 200 characters";
+          }
+        }
+        break;
+      case "gender":
+        if (state === "Sign Up" && !value.trim()) {
+          error = "Gender is required";
+        }
+        break;
+      case "birthday":
+        if (state === "Sign Up") {
+          if (!value.trim()) {
+            error = "Birthday is required";
+          } else {
+            const today = new Date();
+            const birthDate = new Date(value);
+            const age = today.getFullYear() - birthDate.getFullYear();
+            if (birthDate > today) {
+              error = "Birthday cannot be in the future";
+            } else if (age < 13) {
+              error = "You must be at least 13 years old";
+            }
+          }
+        }
+        break;
+      default:
+        break;
+    }
+    return error;
+  };
+
   const onChangeHandler = (event) => {
     const { name, value } = event.target;
     setData((prevData) => ({ ...prevData, [name]: value }));
-    // Clear errors when user starts typing
-    setErrors((prevErrors) => ({ ...prevErrors, [name]: "" }));
+
+    // Real-time validation
+    const error = validateField(name, value);
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      [name]: error,
+    }));
   };
 
   const validateForm = () => {
     const newErrors = {};
+    const fields =
+      state === "Sign Up"
+        ? [
+            "name",
+            "email",
+            "password",
+            "contactNo",
+            "address",
+            "gender",
+            "birthday",
+          ]
+        : ["email", "password"];
 
-    // Common validations for both Sign Up and Login
-    if (!data.email.trim()) {
-      newErrors.email = "Email is required";
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) {
-      newErrors.email = "Invalid email format";
-    }
-
-    if (!data.password.trim()) {
-      newErrors.password = "Password is required";
-    } else if (data.password.length < 8) {
-      newErrors.password = "Password must be at least 8 characters long";
-    } else if (data.password.length > 20) {
-      newErrors.password = "Password must be less than 20 characters";
-    } else if (
-      !/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(
-        data.password
-      )
-    )
-      if (state === "Sign Up") {
-        // Sign Up specific validations
-        if (!data.name.trim()) {
-          newErrors.name = "Name is required";
-        } else if (data.name.length < 2) {
-          newErrors.name = "Name must be at least 2 characters long";
-        } else if (data.name.length > 50) {
-          newErrors.name = "Name must be less than 50 characters";
-        } else if (!/^[A-Za-z\s]+$/.test(data.name)) {
-          newErrors.name = "Name should contain only alphabets and spaces";
-        }
-
-        if (!data.contactNo.trim()) {
-          newErrors.contactNo = "Contact number is required";
-        } else if (!/^\d+$/.test(data.contactNo)) {
-          newErrors.contactNo = "Contact number should contain only digits";
-        } else if (data.contactNo.length < 10) {
-          newErrors.contactNo =
-            "Contact number must be at least 10 digits long";
-        } else if (data.contactNo.length > 15) {
-          newErrors.contactNo = "Contact number must be less than 15 digits";
-        }
-
-        if (!data.address.trim()) {
-          newErrors.address = "Address is required";
-        } else if (data.address.length < 10) {
-          newErrors.address = "Address must be at least 10 characters long";
-        } else if (data.address.length > 200) {
-          newErrors.address = "Address must be less than 200 characters";
-        }
-
-        if (!data.gender.trim()) {
-          newErrors.gender = "Gender is required";
-        }
-
-        if (!data.birthday.trim()) {
-          newErrors.birthday = "Birthday is required";
-        } else {
-          const today = new Date();
-          const birthDate = new Date(data.birthday);
-          const age = today.getFullYear() - birthDate.getFullYear();
-          if (birthDate > today) {
-            newErrors.birthday = "Birthday cannot be in the future";
-          } else if (age < 13) {
-            newErrors.birthday = "You must be at least 13 years old";
-          }
-        }
-      }
+    fields.forEach((field) => {
+      const error = validateField(field, data[field]);
+      if (error) newErrors[field] = error;
+    });
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -106,175 +143,257 @@ const Login = () => {
     }
 
     if (state === "Sign Up") {
-      // Simulate account creation
       console.log("Account created with data:", data);
       alert("Account created successfully!");
       setState("Login");
+      setData({
+        name: "",
+        email: "",
+        password: "",
+        contactNo: "",
+        address: "",
+        gender: "",
+        birthday: "",
+      });
+      setErrors({});
     } else {
-      // Simulate login
       console.log("Login with data:", {
         email: data.email,
         password: data.password,
       });
-      login("https://via.placeholder.com/40"); // Set user profile image
+      login("https://via.placeholder.com/40");
       navigate("/");
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="min-h-[80vh] flex items-center">
-      <div className="flex flex-col gap-3 m-auto items-start p-8 min-w-[340px] sm:min-w-96 border rounded-xl text-zinc-600 text-sm shadow-lg">
-        <p className="text-2xl font-semibold">
-          {state === "Sign Up" ? "Create Account" : "Login"}
-        </p>
-        <p>
-          Please {state === "Sign Up" ? "sign up" : "log in"} to book an
-          appointment.
-        </p>
-
-        {state === "Sign Up" && (
-          <>
-            <div className="w-full">
-              <p>Full Name</p>
-              <input
-                className="border border-zinc-300 rounded w-full p-2 mt-1"
-                name="name"
-                type="text"
-                onChange={onChangeHandler}
-                value={data.name}
-                required
-              />
-              {errors.name && (
-                <p className="text-red-500 text-sm mt-1">{errors.name}</p>
-              )}
-            </div>
-
-            <div className="w-full">
-              <p>Contact No</p>
-              <input
-                className="border border-zinc-300 rounded w-full p-2 mt-1"
-                name="contactNo"
-                type="tel"
-                onChange={onChangeHandler}
-                value={data.contactNo}
-                required
-              />
-              {errors.contactNo && (
-                <p className="text-red-500 text-sm mt-1">{errors.contactNo}</p>
-              )}
-            </div>
-
-            <div className="w-full">
-              <p>Address</p>
-              <input
-                className="border border-zinc-300 rounded w-full p-2 mt-1"
-                name="address"
-                type="text"
-                onChange={onChangeHandler}
-                value={data.address}
-                required
-              />
-              {errors.address && (
-                <p className="text-red-500 text-sm mt-1">{errors.address}</p>
-              )}
-            </div>
-
-            <div className="w-full">
-              <p>Gender</p>
-              <select
-                className="border border-zinc-300 rounded w-full p-2 mt-1"
-                name="gender"
-                onChange={onChangeHandler}
-                value={data.gender}
-                required
-              >
-                <option value="">Select Gender</option>
-                <option value="male">Male</option>
-                <option value="female">Female</option>
-                <option value="other">Other</option>
-              </select>
-              {errors.gender && (
-                <p className="text-red-500 text-sm mt-1">{errors.gender}</p>
-              )}
-            </div>
-
-            <div className="w-full">
-              <p>Birthday</p>
-              <input
-                className="border border-zinc-300 rounded w-full p-2 mt-1"
-                name="birthday"
-                type="date"
-                onChange={onChangeHandler}
-                value={data.birthday}
-                required
-              />
-              {errors.birthday && (
-                <p className="text-red-500 text-sm mt-1">{errors.birthday}</p>
-              )}
-            </div>
-          </>
-        )}
-
-        <div className="w-full">
-          <p>Email</p>
-          <input
-            className="border border-zinc-300 rounded w-full p-2 mt-1"
-            name="email"
-            type="email"
-            onChange={onChangeHandler}
-            value={data.email}
-            required
-          />
-          {errors.email && (
-            <p className="text-red-500 text-sm mt-1">{errors.email}</p>
-          )}
-        </div>
-
-        <div className="w-full">
-          <p>Password</p>
-          <input
-            className="border border-zinc-300 rounded w-full p-2 mt-1"
-            name="password"
-            type="password"
-            onChange={onChangeHandler}
-            value={data.password}
-            required
-          />
-          {errors.password && (
-            <p className="text-red-500 text-sm mt-1">{errors.password}</p>
-          )}
-        </div>
-
-        <button
-          type="submit"
-          className="bg-primary text-white w-full py-2 rounded-md text-base"
-        >
-          {state === "Sign Up" ? "Create Account" : "Login"}
-        </button>
-
-        {state === "Sign Up" ? (
-          <p>
-            Already have an account?{" "}
-            <span
-              onClick={() => setState("Login")}
-              className="text-primary underline cursor-pointer"
-            >
-              Login here
-            </span>
-          </p>
-        ) : (
-          <p>
-            Create a new account?{" "}
-            <span
-              onClick={() => setState("Sign Up")}
-              className="text-primary underline cursor-pointer"
-            >
-              Click here
-            </span>
-          </p>
-        )}
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 relative overflow-hidden">
+      <div className="absolute top-0 left-0 w-full h-full overflow-hidden">
+        <div className="absolute top-20 left-20 w-64 h-64 bg-blue-200 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob"></div>
+        <div className="absolute bottom-20 right-20 w-64 h-64 bg-indigo-200 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob animation-delay-2000"></div>
+        <div className="absolute top-1/2 right-1/4 w-64 h-64 bg-purple-200 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob animation-delay-4000"></div>
       </div>
-    </form>
+
+      <form
+        onSubmit={handleSubmit}
+        className="relative z-10 w-full max-w-md px-4"
+      >
+        <div className="flex flex-col gap-4 p-8 bg-white/90 backdrop-blur-sm rounded-xl shadow-lg border border-white/20">
+          <div className="text-center">
+            <h2 className="text-3xl font-bold text-indigo-600 mb-1">
+              {state === "Sign Up" ? "Create Account" : "Welcome Back"}
+            </h2>
+            <p className="text-zinc-500 mb-6">
+              {state === "Sign Up"
+                ? "Join us to get started"
+                : "Log in to continue your journey"}
+            </p>
+          </div>
+
+          {state === "Sign Up" && (
+            <>
+              <div className="w-full">
+                <label className="block text-sm font-medium text-zinc-700 mb-1">
+                  Full Name
+                </label>
+                <input
+                  className="w-full px-4 py-2 rounded-lg border border-zinc-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+                  name="name"
+                  type="text"
+                  onChange={onChangeHandler}
+                  value={data.name}
+                  placeholder="your name"
+                />
+                {errors.name && (
+                  <p className="text-red-500 text-xs mt-1">{errors.name}</p>
+                )}
+              </div>
+
+              <div className="w-full">
+                <label className="block text-sm font-medium text-zinc-700 mb-1">
+                  Contact Number
+                </label>
+                <input
+                  className="w-full px-4 py-2 rounded-lg border border-zinc-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+                  name="contactNo"
+                  type="tel"
+                  onChange={onChangeHandler}
+                  value={data.contactNo}
+                  placeholder="1234567890"
+                />
+                {errors.contactNo && (
+                  <p className="text-red-500 text-xs mt-1">
+                    {errors.contactNo}
+                  </p>
+                )}
+              </div>
+
+              <div className="w-full">
+                <label className="block text-sm font-medium text-zinc-700 mb-1">
+                  Address
+                </label>
+                <input
+                  className="w-full px-4 py-2 rounded-lg border border-zinc-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+                  name="address"
+                  type="text"
+                  onChange={onChangeHandler}
+                  value={data.address}
+                  placeholder="your address"
+                />
+                {errors.address && (
+                  <p className="text-red-500 text-xs mt-1">{errors.address}</p>
+                )}
+              </div>
+
+              <div className="w-full">
+                <label className="block text-sm font-medium text-zinc-700 mb-1">
+                  Gender
+                </label>
+                <select
+                  className="w-full px-4 py-2 rounded-lg border border-zinc-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+                  name="gender"
+                  onChange={onChangeHandler}
+                  value={data.gender}
+                >
+                  <option value="">Select Gender</option>
+                  <option value="male">Male</option>
+                  <option value="female">Female</option>
+                  <option value="other">Other</option>
+                  <option value="prefer-not-to-say">Prefer not to say</option>
+                </select>
+                {errors.gender && (
+                  <p className="text-red-500 text-xs mt-1">{errors.gender}</p>
+                )}
+              </div>
+
+              <div className="w-full">
+                <label className="block text-sm font-medium text-zinc-700 mb-1">
+                  Birthday
+                </label>
+                <input
+                  className="w-full px-4 py-2 rounded-lg border border-zinc-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+                  name="birthday"
+                  type="date"
+                  onChange={onChangeHandler}
+                  value={data.birthday}
+                />
+                {errors.birthday && (
+                  <p className="text-red-500 text-xs mt-1">{errors.birthday}</p>
+                )}
+              </div>
+            </>
+          )}
+
+          <div className="w-full">
+            <label className="block text-sm font-medium text-zinc-700 mb-1">
+              Email
+            </label>
+            <input
+              className="w-full px-4 py-2 rounded-lg border border-zinc-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+              name="email"
+              type="email"
+              onChange={onChangeHandler}
+              value={data.email}
+              placeholder="your@email.com"
+            />
+            {errors.email && (
+              <p className="text-red-500 text-xs mt-1">{errors.email}</p>
+            )}
+          </div>
+
+          <div className="w-full">
+            <label className="block text-sm font-medium text-zinc-700 mb-1">
+              Password
+            </label>
+            <input
+              className="w-full px-4 py-2 rounded-lg border border-zinc-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+              name="password"
+              type="password"
+              onChange={onChangeHandler}
+              value={data.password}
+              placeholder="••••••••"
+            />
+            {errors.password && (
+              <p className="text-red-500 text-xs mt-1">{errors.password}</p>
+            )}
+          </div>
+
+          <button
+            type="submit"
+            className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2.5 px-4 rounded-lg transition-colors duration-300 mt-2 shadow-md hover:shadow-lg active:scale-95"
+          >
+            {state === "Sign Up" ? "Create Account" : "Login"}
+          </button>
+
+          <div className="text-center w-full mt-4 text-sm">
+            {state === "Sign Up" ? (
+              <p className="text-zinc-600">
+                Already have an account?{" "}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setState("Login");
+                    setErrors({});
+                    setData({
+                      name: "",
+                      email: "",
+                      password: "",
+                      contactNo: "",
+                      address: "",
+                      gender: "",
+                      birthday: "",
+                    });
+                  }}
+                  className="text-indigo-600 font-medium hover:underline focus:outline-none"
+                >
+                  Login here
+                </button>
+              </p>
+            ) : (
+              <p className="text-zinc-600">
+                Don't have an account?{" "}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setState("Sign Up");
+                    setErrors({});
+                  }}
+                  className="text-indigo-600 font-medium hover:underline focus:outline-none"
+                >
+                  Sign up here
+                </button>
+              </p>
+            )}
+          </div>
+        </div>
+      </form>
+
+      <style jsx>{`
+        @keyframes blob {
+          0% {
+            transform: translate(0px, 0px) scale(1);
+          }
+          33% {
+            transform: translate(30px, -50px) scale(1.1);
+          }
+          66% {
+            transform: translate(-20px, 20px) scale(0.9);
+          }
+          100% {
+            transform: translate(0px, 0px) scale(1);
+          }
+        }
+        .animate-blob {
+          animation: blob 7s infinite;
+        }
+        .animation-delay-2000 {
+          animation-delay: 2s;
+        }
+        .animation-delay-4000 {
+          animation-delay: 4s;
+        }
+      `}</style>
+    </div>
   );
 };
 

@@ -3,16 +3,16 @@ import profilePic from "../assets/profile_pic.png";
 
 const MyProfile = () => {
   const [userData, setUserData] = useState({
-    name: "Edward Vincent",
+    name: "Nuradha",
     image: profilePic, // Default profile picture
-    email: "edwardv@gmail.com",
-    phone: "+1 123 456 7890",
+    email: "nuradha123@gmail.com",
+    phone: "0703406091",
     address: {
-      line1: "57th Cross, Richmond",
-      line2: "Circle, Church Road, London",
+      line1: "nupe",
+      line2: "Matara",
     },
     gender: "Male",
-    dob: "2000-01-20",
+    dob: "2002-08-16",
   });
 
   const [isEdit, setIsEdit] = useState(false);

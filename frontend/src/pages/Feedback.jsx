@@ -8,12 +8,6 @@ const Feedback = () => {
   const [contactNo, setContactNo] = useState("");
   const [description, setDescription] = useState("");
   const [errors, setErrors] = useState({});
-  const [touched, setTouched] = useState({
-    name: false,
-    email: false,
-    contactNo: false,
-    description: false,
-  });
 
   const validateField = (fieldName, value) => {
     let error = "";
@@ -42,8 +36,9 @@ const Feedback = () => {
           error = "Contact number is required";
         } else if (!/^\d+$/.test(value)) {
           error = "Contact number should contain only digits";
-        } else if (value.length < 10) {
-          error = "Contact number must be only 10 digits";
+        } else if (value.length !== 10) {
+          // Changed to exact 10 digits
+          error = "Contact number must be exactly 10 digits";
         }
         break;
       case "description":
@@ -62,10 +57,33 @@ const Feedback = () => {
     return error;
   };
 
-  const handleBlur = (fieldName) => (e) => {
-    setTouched({ ...touched, [fieldName]: true });
-    const error = validateField(fieldName, e.target.value);
-    setErrors({ ...errors, [fieldName]: error });
+  const handleChange = (fieldName) => (e) => {
+    const value = e.target.value;
+
+    // Update the respective field state
+    switch (fieldName) {
+      case "name":
+        setName(value);
+        break;
+      case "email":
+        setEmail(value);
+        break;
+      case "contactNo":
+        setContactNo(value);
+        break;
+      case "description":
+        setDescription(value);
+        break;
+      default:
+        break;
+    }
+
+    // Validate in real-time
+    const error = validateField(fieldName, value);
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      [fieldName]: error,
+    }));
   };
 
   const validateForm = () => {
@@ -77,13 +95,6 @@ const Feedback = () => {
     };
 
     setErrors(newErrors);
-    setTouched({
-      name: true,
-      email: true,
-      contactNo: true,
-      description: true,
-    });
-
     return !Object.values(newErrors).some((error) => error);
   };
 
@@ -110,6 +121,7 @@ const Feedback = () => {
         setEmail("");
         setContactNo("");
         setDescription("");
+        setErrors({});
       } else {
         alert("❌ Error submitting feedback");
       }
@@ -138,12 +150,11 @@ const Feedback = () => {
               className="w-full p-3 mt-1 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
               type="text"
               placeholder="Enter your name"
-              onChange={(e) => setName(e.target.value)}
-              onBlur={handleBlur("name")}
+              onChange={handleChange("name")}
               value={name}
               required
             />
-            {touched.name && errors.name && (
+            {errors.name && (
               <p className="text-red-500 text-sm mt-1">{errors.name}</p>
             )}
           </div>
@@ -154,12 +165,11 @@ const Feedback = () => {
               className="w-full p-3 mt-1 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
               type="email"
               placeholder="Enter your email"
-              onChange={(e) => setEmail(e.target.value)}
-              onBlur={handleBlur("email")}
+              onChange={handleChange("email")}
               value={email}
               required
             />
-            {touched.email && errors.email && (
+            {errors.email && (
               <p className="text-red-500 text-sm mt-1">{errors.email}</p>
             )}
           </div>
@@ -170,12 +180,11 @@ const Feedback = () => {
               className="w-full p-3 mt-1 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
               type="text"
               placeholder="Enter your contact number"
-              onChange={(e) => setContactNo(e.target.value)}
-              onBlur={handleBlur("contactNo")}
+              onChange={handleChange("contactNo")}
               value={contactNo}
               required
             />
-            {touched.contactNo && errors.contactNo && (
+            {errors.contactNo && (
               <p className="text-red-500 text-sm mt-1">{errors.contactNo}</p>
             )}
           </div>
@@ -185,12 +194,11 @@ const Feedback = () => {
             <textarea
               className="w-full p-3 mt-1 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none resize-none h-28"
               placeholder="Write your feedback here..."
-              onChange={(e) => setDescription(e.target.value)}
-              onBlur={handleBlur("description")}
+              onChange={handleChange("description")}
               value={description}
               required
             />
-            {touched.description && errors.description && (
+            {errors.description && (
               <p className="text-red-500 text-sm mt-1">{errors.description}</p>
             )}
           </div>

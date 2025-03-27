@@ -12,6 +12,7 @@ import Feedback from "./pages/Feedback";
 import Footer from "./components/Footer";
 import Feedbackdetails from "./pages/Feedbackdetails";
 import Updatefeedback from "./pages/Updatefeedback";
+import Privacy from "./pages/Privacy";
 
 const App = () => {
   return (
@@ -33,6 +34,7 @@ const App = () => {
             <Route path="/my-orders" element={<MyOrders />} />
             <Route path="/feedbackdetails" element={<Feedbackdetails />} />
             <Route path="/updatefeedback" element={<Updatefeedback />} />
+            <Route path="/privacy" element={<Privacy />} />
           </Routes>
         </div>
         <Footer />
