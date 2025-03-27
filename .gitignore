@@ -1,0 +1,51 @@
+# Node modules
+node_modules/
+npm-debug.log
+yarn-error.log
+pnpm-debug.log
+
+# Build files
+dist/
+build/
+.cache/
+out/
+temp/
+tmp/
+
+# Logs
+logs/
+*.log
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Editor settings
+.vscode/
+.idea/
+*.swp
+
+# Image files
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.svg
+*.webp
+*.ico
+
+# Document files
+*.pdf
+*.doc
+*.docx
+*.xls
+*.xlsx
+*.ppt
+*.pptx
+*.txt
+*.md
+*.csv
