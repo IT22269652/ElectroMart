@@ -4,22 +4,16 @@ import { assets } from "../assets/assets";
 import VoiceNavigation from "./VoiceNavigation";
 
 const Header = () => {
-  // State management
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [voiceFeedback, setVoiceFeedback] = useState(null);
   const navigate = useNavigate();
   const featuredProductsRef = useRef(null);
 
-  // Slideshow images
   const images = [assets.img1, assets.img2, assets.img3, assets.img5];
-
-  // Product categories
   const categories = ["TV", "Camera", "Laptop", "iPhone", "Other Items"];
 
-  // Complete product data
   const products = [
-    // TV Products
     {
       id: "1",
       name: "Smart TV",
@@ -48,8 +42,6 @@ const Header = () => {
       image: assets.SonyTV01,
       category: "TV",
     },
-
-    // Camera Products
     {
       id: "5",
       name: "DSLR Camera",
@@ -78,8 +70,6 @@ const Header = () => {
       image: assets.camera04,
       category: "Camera",
     },
-
-    // Laptop Products
     {
       id: "9",
       name: "Gaming Laptop",
@@ -108,8 +98,6 @@ const Header = () => {
       image: assets.laptop04,
       category: "Laptop",
     },
-
-    // iPhone Products
     {
       id: "13",
       name: "iPhone 14 Pro",
@@ -138,8 +126,6 @@ const Header = () => {
       image: assets.iphone04,
       category: "iPhone",
     },
-
-    // Other Items
     {
       id: "17",
       name: "Wireless Earbuds",
@@ -198,7 +184,6 @@ const Header = () => {
     },
   ];
 
-  // Auto-rotate slideshow
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length);
@@ -206,7 +191,6 @@ const Header = () => {
     return () => clearInterval(interval);
   }, [images.length]);
 
-  // Filter products based on selected categories
   const filteredProducts =
     selectedCategories.length > 0
       ? products.filter((product) =>
@@ -214,7 +198,6 @@ const Header = () => {
         )
       : products;
 
-  // Handle manual category selection
   const handleCategoryChange = (category) => {
     setSelectedCategories((prev) =>
       prev.includes(category)
@@ -223,17 +206,14 @@ const Header = () => {
     );
   };
 
-  // Handle product click
   const handleProductClick = (productId) => {
     navigate(`/product/${productId}`);
   };
 
-  // Scroll to products section
   const scrollToFeaturedProducts = () => {
     featuredProductsRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
-  // Handle voice command feedback
   const handleVoiceCommand = (command, handled) => {
     if (handled) {
       setVoiceFeedback(`Executed: "${command}"`);
