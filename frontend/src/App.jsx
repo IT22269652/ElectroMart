@@ -23,6 +23,11 @@ import Admin from "./pages/ProductHandling/Admin";
 
 import Privacy from "./pages/Privacy";
 import Payment from "./pages/Payment";
+import Cart from "./pages/Cart";
+import Delivery from "./pages/Delivery";
+import DeliveryManagement from "./pages/DeliveryManagement";
+import PaymentManagement from "./pages/PaymentManagement";
+import Order from "./pages/Order";
 
 
 const App = () => {
@@ -45,6 +50,12 @@ const App = () => {
             <Route path="/feedbackdetails" element={<Feedbackdetails />} />
             <Route path="/updatefeedback" element={<Updatefeedback />} />
             <Route path="/payment" element={<Payment />} />
+            <Route path="/cart" element={<Cart />} />
+            <Route path="/delivery" element={<Delivery />} />
+            <Route path="/delivery-management" element={<DeliveryManagement />} />
+            <Route path="/payment-management" element={<PaymentManagement />} />
+            <Route path="/order" element={<Order />} />
+            
 
             <Route path="/productdetails" element={ProductDetails} />
             <Route path="/" element={<Header />} />
