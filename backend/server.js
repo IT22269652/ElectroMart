@@ -3,7 +3,9 @@ import cors from "cors";
 import "dotenv/config";
 import { connectDB } from "./config/db.js";
 import userRouter from "./routes/userRoute.js";
-import feedbackRouter from "./routes/feedbackRoute.js"; // Import Feedback Routes
+import feedbackRouter from "./routes/feedbackRoute.js";
+import deliveryRouter from "./routes/deliveryRoute.js"; // Import Delivery Routes
+import paymentRouter from "./routes/paymentRoute.js";
 
 // App Configuration
 const app = express();
@@ -18,7 +20,9 @@ connectDB();
 
 // API Routes
 app.use("/api/user", userRouter);
-app.use("/api/feedback", feedbackRouter); // Add Feedback API Route
+app.use("/api/feedback", feedbackRouter);
+app.use("/api/delivery", deliveryRouter); // Add Delivery API Route
+app.use("/api/payment", paymentRouter);
 
 // Root Route
 app.get("/", (req, res) => {
