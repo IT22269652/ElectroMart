@@ -14,6 +14,7 @@ const Header = () => {
   const categories = ["TV", "Camera", "Laptop", "iPhone", "Other Items"];
 
   const products = [
+    // TV Products
     {
       id: "1",
       name: "Smart TV",
@@ -42,6 +43,7 @@ const Header = () => {
       image: assets.SonyTV01,
       category: "TV",
     },
+    // Camera Products
     {
       id: "5",
       name: "DSLR Camera",
@@ -70,6 +72,7 @@ const Header = () => {
       image: assets.camera04,
       category: "Camera",
     },
+    // Laptop Products
     {
       id: "9",
       name: "Gaming Laptop",
@@ -98,6 +101,7 @@ const Header = () => {
       image: assets.laptop04,
       category: "Laptop",
     },
+    // iPhone Products
     {
       id: "13",
       name: "iPhone 14 Pro",
@@ -126,6 +130,7 @@ const Header = () => {
       image: assets.iphone04,
       category: "iPhone",
     },
+    // Other Items
     {
       id: "17",
       name: "Wireless Earbuds",
@@ -266,7 +271,7 @@ const Header = () => {
           </button>
         </div>
 
-        {/* Image Slideshow */}
+        {/* Image Slideshow with Navigation Dots */}
         <div className="relative w-1/2 h-full flex items-center justify-center">
           {images.map((image, index) => (
             <img
@@ -278,21 +283,19 @@ const Header = () => {
               }`}
             />
           ))}
+          <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex space-x-2">
+            {images.map((_, index) => (
+              <button
+                key={index}
+                className={`w-3 h-3 rounded-full transition-all ${
+                  index === currentIndex ? "bg-white scale-125" : "bg-gray-300"
+                }`}
+                aria-label={`Go to slide ${index + 1}`}
+                onClick={() => setCurrentIndex(index)}
+              />
+            ))}
+          </div>
         </div>
-      </div>
-
-      {/* Slideshow Indicators */}
-      <div className="flex justify-center mt-4 space-x-2">
-        {images.map((_, index) => (
-          <button
-            key={index}
-            className={`w-3 h-3 rounded-full transition-all ${
-              index === currentIndex ? "bg-blue-600 scale-125" : "bg-gray-300"
-            }`}
-            aria-label={`Go to slide ${index + 1}`}
-            onClick={() => setCurrentIndex(index)}
-          />
-        ))}
       </div>
 
       {/* Category Filter Section */}

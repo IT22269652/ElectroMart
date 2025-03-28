@@ -39,12 +39,11 @@ const Login = () => {
       case "name":
         if (state === "Sign Up") {
           if (!value.trim()) error = "Name is required";
-          else if (value.length < 2)
-            error = "Name must be at least 2 characters";
+          else if (value.length < 2) error = "Name must be at least 2 characters";
           else if (value.length > 50)
             error = "Name must be less than 50 characters";
           else if (!/^[A-Za-z\s]+$/.test(value))
-            error = "Name should contain only letters";
+            error = "Name should contain only letters and spaces";
         }
         break;
       case "email":
@@ -62,8 +61,10 @@ const Login = () => {
       case "contactNo":
         if (state === "Sign Up") {
           if (!value.trim()) error = "Contact number is required";
-          else if (!/^\d+$/.test(value)) error = "Only digits allowed";
-          else if (value.length !== 10) error = "Must be 10 digits";
+          else if (!/^\d+$/.test(value))
+            error = "Contact number should contain only digits";
+          else if (value.length !== 10)
+            error = "Contact number must be 10 digits";
         }
         break;
       case "address":
@@ -71,6 +72,8 @@ const Login = () => {
           if (!value.trim()) error = "Address is required";
           else if (value.length < 10)
             error = "Address must be at least 10 characters";
+          else if (value.length > 200)
+            error = "Address must be less than 200 characters";
         }
         break;
       case "gender":
@@ -79,13 +82,12 @@ const Login = () => {
       case "birthday":
         if (state === "Sign Up") {
           if (!value.trim()) error = "Birthday is required";
-          else if (new Date(value) > new Date())
-            error = "Birthday cannot be in future";
           else {
             const today = new Date();
             const birthDate = new Date(value);
             const age = today.getFullYear() - birthDate.getFullYear();
-            if (age < 13) error = "You must be at least 13 years old";
+            if (birthDate > today) error = "Birthday cannot be in the future";
+            else if (age < 13) error = "You must be at least 13 years old";
           }
         }
         break;
@@ -240,9 +242,7 @@ const Login = () => {
                   placeholder="1234567890"
                 />
                 {errors.contactNo && (
-                  <p className="text-red-500 text-xs mt-1">
-                    {errors.contactNo}
-                  </p>
+                  <p className="text-red-500 text-xs mt-1">{errors.contactNo}</p>
                 )}
               </div>
               <div className="w-full">

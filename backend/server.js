@@ -4,6 +4,7 @@ import "dotenv/config";
 import { connectDB } from "./config/db.js";
 import userRouter from "./routes/userRoute.js";
 import feedbackRouter from "./routes/feedbackRoute.js"; // Import Feedback Routes
+import productRouter from "./routes/productRoute.js";
 
 // App Configuration
 const app = express();
@@ -19,6 +20,7 @@ connectDB();
 // API Routes
 app.use("/api/user", userRouter);
 app.use("/api/feedback", feedbackRouter); // Add Feedback API Route
+app.use("/api/products", productRouter);
 
 // Root Route
 app.get("/", (req, res) => {
