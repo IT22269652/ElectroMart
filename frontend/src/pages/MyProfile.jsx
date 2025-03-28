@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useContext } from "react";
 import { AuthContext } from "../components/AuthContext";
 import { useNavigate } from "react-router-dom";
+// Import icons from react-icons
+import { FaUser, FaEdit, FaSignOutAlt } from "react-icons/fa";
 
 // Placeholder image for the profile picture (you can replace this with an actual image URL or user-uploaded image)
 const defaultProfileImage = "https://via.placeholder.com/150"; // Replace with a scenic image URL if needed
@@ -58,7 +60,7 @@ const MyProfile = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 p-6">
-      <div className="bg-white rounded-lg shadow-md p-8 max-w-md w-full">
+      <div className="bg-white rounded-lg shadow-md p-8 max-w-3xl w-full">
         {/* Header */}
         <div className="bg-blue-600 text-white text-center py-3 rounded-t-lg">
           <h2 className="text-xl font-semibold">My Account</h2>
@@ -66,14 +68,16 @@ const MyProfile = () => {
 
         {/* Profile Section */}
         <div className="flex items-center justify-between py-4 border-b">
-          <div className="flex items-center">
+          <div className="flex items-center space-x-2">
+            <FaUser className="text-gray-700" />
             <span className="text-gray-700 font-medium">Personal Details</span>
           </div>
           <button
             onClick={() => navigate("/edit-profile")} // Assuming you have an edit profile route
-            className="text-blue-600 hover:underline flex items-center"
+            className="flex items-center space-x-1 text-blue-600 hover:underline"
           >
-            Edit Profile
+            <FaEdit className="text-blue-600" />
+            <span>Edit Profile</span>
           </button>
         </div>
 
@@ -86,89 +90,100 @@ const MyProfile = () => {
           />
         </div>
 
-        {/* Profile Details */}
+        {/* Profile Details - Split into Two Columns */}
         {userData && (
-          <div className="space-y-4">
-            <div className="flex flex-col">
-              <label className="text-gray-600 font-medium">FULL NAME</label>
-              <input
-                type="text"
-                value={userData.name}
-                readOnly
-                className="border rounded-lg p-2 bg-gray-100 text-gray-700"
-              />
-            </div>
-            <div className="flex flex-col">
-              <label className="text-gray-600 font-medium">EMAIL</label>
-              <input
-                type="email"
-                value={userData.email}
-                readOnly
-                className="border rounded-lg p-2 bg-gray-100 text-gray-700"
-              />
-            </div>
-            <div className="flex flex-col">
-              <label className="text-gray-600 font-medium">BIRTH DATE</label>
-              <input
-                type="text"
-                value={new Date(userData.birthday).toLocaleDateString()}
-                readOnly
-                className="border rounded-lg p-2 bg-gray-100 text-gray-700"
-              />
-            </div>
-            <div className="flex flex-col">
-              <label className="text-gray-600 font-medium">GENDER</label>
-              <input
-                type="text"
-                value={userData.gender}
-                readOnly
-                className="border rounded-lg p-2 bg-gray-100 text-gray-700"
-              />
-            </div>
-            <div className="flex flex-col">
-              <label className="text-gray-600 font-medium">ADDRESS</label>
-              <input
-                type="text"
-                value={userData.address}
-                readOnly
-                className="border rounded-lg p-2 bg-gray-100 text-gray-700"
-              />
-            </div>
-            <div className="flex flex-col">
-              <label className="text-gray-600 font-medium">PHONE NUMBER</label>
-              <input
-                type="text"
-                value={userData.contactNo}
-                readOnly
-                className="border rounded-lg p-2 bg-gray-100 text-gray-700"
-              />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Left Column */}
+            <div className="space-y-4">
+              <div className="flex flex-col">
+                <label className="text-gray-600 font-medium">FULL NAME</label>
+                <input
+                  type="text"
+                  value={userData.name}
+                  readOnly
+                  className="border rounded-lg p-2 bg-gray-100 text-gray-700"
+                />
+              </div>
+              <div className="flex flex-col">
+                <label className="text-gray-600 font-medium">EMAIL</label>
+                <input
+                  type="email"
+                  value={userData.email}
+                  readOnly
+                  className="border rounded-lg p-2 bg-gray-100 text-gray-700"
+                />
+              </div>
+              <div className="flex flex-col">
+                <label className="text-gray-600 font-medium">BIRTH DATE</label>
+                <input
+                  type="text"
+                  value={new Date(userData.birthday).toLocaleDateString()}
+                  readOnly
+                  className="border rounded-lg p-2 bg-gray-100 text-gray-700"
+                />
+              </div>
             </div>
 
-            {/* Buttons */}
-            <div className="flex justify-between mt-6">
-              <button
-                onClick={() => navigate("/edit-profile")}
-                className="flex items-center bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
-              >
-                Edit Profile
-              </button>
-              <button
-                onClick={() => {
-                  logout();
-                  navigate("/login");
-                }}
-                className="flex items-center bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-colors"
-              >
-                Logout
-              </button>
-            </div>
-
-            {/* Last Updated */}
-            <div className="text-center text-gray-500 text-sm mt-4">
-              Last updated: 3/28/2025
+            {/* Right Column */}
+            <div className="space-y-4">
+              <div className="flex flex-col">
+                <label className="text-gray-600 font-medium">GENDER</label>
+                <input
+                  type="text"
+                  value={userData.gender}
+                  readOnly
+                  className="border rounded-lg p-2 bg-gray-100 text-gray-700"
+                />
+              </div>
+              <div className="flex flex-col">
+                <label className="text-gray-600 font-medium">ADDRESS</label>
+                <input
+                  type="text"
+                  value={userData.address}
+                  readOnly
+                  className="border rounded-lg p-2 bg-gray-100 text-gray-700"
+                />
+              </div>
+              <div className="flex flex-col">
+                <label className="text-gray-600 font-medium">
+                  PHONE NUMBER
+                </label>
+                <input
+                  type="text"
+                  value={userData.contactNo}
+                  readOnly
+                  className="border rounded-lg p-2 bg-gray-100 text-gray-700"
+                />
+              </div>
             </div>
           </div>
         )}
+
+        {/* Buttons */}
+        <div className="flex justify-between mt-6">
+          <button
+            onClick={() => navigate("/edit-profile")}
+            className="flex items-center space-x-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            <FaEdit />
+            <span>Edit Profile</span>
+          </button>
+          <button
+            onClick={() => {
+              logout();
+              navigate("/login");
+            }}
+            className="flex items-center space-x-2 bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-colors"
+          >
+            <FaSignOutAlt />
+            <span>Logout</span>
+          </button>
+        </div>
+
+        {/* Last Updated */}
+        <div className="text-center text-gray-500 text-sm mt-4">
+          Last updated: 3/28/2025
+        </div>
       </div>
     </div>
   );
