@@ -182,7 +182,7 @@ const MyProfile = () => {
 
         {/* Last Updated */}
         <div className="text-center text-gray-500 text-sm mt-4">
-          Last updated: 3/28/2025
+          Last updated : 3/28/2025
         </div>
       </div>
     </div>
