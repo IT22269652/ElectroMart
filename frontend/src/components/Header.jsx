@@ -243,7 +243,7 @@ const Header = () => {
           </button>
         </div>
 
-        {/* Right Side: Image Slider */}
+        {/* Right Side: Image Slider with Navigation Dots in the Middle */}
         <div className="relative w-1/2 h-full flex items-center justify-center">
           {images.map((image, index) => (
             <img
@@ -255,19 +255,18 @@ const Header = () => {
               }`}
             />
           ))}
+          {/* Navigation Dots Centered in the Middle of the Image */}
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex space-x-2">
+            {images.map((_, index) => (
+              <div
+                key={index}
+                className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                  index === currentIndex ? "bg-white scale-125" : "bg-gray-300"
+                }`}
+              />
+            ))}
+          </div>
         </div>
-      </div>
-
-      {/* Image Slider Navigation Dots */}
-      <div className="relative -top-10 left-1/2 transform -translate-x-1/2 flex space-x-2">
-        {images.map((_, index) => (
-          <div
-            key={index}
-            className={`w-3 h-3 rounded-full transition-all duration-300 ${
-              index === currentIndex ? "bg-white scale-125" : "bg-gray-300"
-            }`}
-          />
-        ))}
       </div>
 
       {/* Category Section */}

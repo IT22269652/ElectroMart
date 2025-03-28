@@ -19,77 +19,60 @@ const Login = () => {
 
   const validateField = (name, value) => {
     let error = "";
-
     switch (name) {
       case "email":
-        if (!value.trim()) {
-          error = "Email is required";
-        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+        if (!value.trim()) error = "Email is required";
+        else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value))
           error = "Invalid email format";
-        }
         break;
       case "password":
-        if (!value.trim()) {
-          error = "Password is required";
-        } else if (value.length < 8) {
-          error = "Password must be at least 8 characters long";
-        } else if (value.length > 20) {
+        if (!value.trim()) error = "Password is required";
+        else if (value.length < 8)
+          error = "Password must be at least 8 characters";
+        else if (value.length > 20)
           error = "Password must be less than 20 characters";
-        }
         break;
       case "name":
         if (state === "Sign Up") {
-          if (!value.trim()) {
-            error = "Name is required";
-          } else if (value.length < 2) {
-            error = "Name must be at least 2 characters long";
-          } else if (value.length > 50) {
+          if (!value.trim()) error = "Name is required";
+          else if (value.length < 2)
+            error = "Name must be at least 2 characters";
+          else if (value.length > 50)
             error = "Name must be less than 50 characters";
-          } else if (!/^[A-Za-z\s]+$/.test(value)) {
+          else if (!/^[A-Za-z\s]+$/.test(value))
             error = "Name should contain only alphabets and spaces";
-          }
         }
         break;
       case "contactNo":
         if (state === "Sign Up") {
-          if (!value.trim()) {
-            error = "Contact number is required";
-          } else if (!/^\d+$/.test(value)) {
+          if (!value.trim()) error = "Contact number is required";
+          else if (!/^\d+$/.test(value))
             error = "Contact number should contain only digits";
-          } else if (value.length !== 10) {
-            error = "Contact number must be exactly 10 digits";
-          }
+          else if (value.length !== 10)
+            error = "Contact number must be 10 digits";
         }
         break;
       case "address":
         if (state === "Sign Up") {
-          if (!value.trim()) {
-            error = "Address is required";
-          } else if (value.length < 10) {
-            error = "Address must be at least 10 characters long";
-          } else if (value.length > 200) {
+          if (!value.trim()) error = "Address is required";
+          else if (value.length < 10)
+            error = "Address must be at least 10 characters";
+          else if (value.length > 200)
             error = "Address must be less than 200 characters";
-          }
         }
         break;
       case "gender":
-        if (state === "Sign Up" && !value.trim()) {
-          error = "Gender is required";
-        }
+        if (state === "Sign Up" && !value.trim()) error = "Gender is required";
         break;
       case "birthday":
         if (state === "Sign Up") {
-          if (!value.trim()) {
-            error = "Birthday is required";
-          } else {
+          if (!value.trim()) error = "Birthday is required";
+          else {
             const today = new Date();
             const birthDate = new Date(value);
             const age = today.getFullYear() - birthDate.getFullYear();
-            if (birthDate > today) {
-              error = "Birthday cannot be in the future";
-            } else if (age < 13) {
-              error = "You must be at least 13 years old";
-            }
+            if (birthDate > today) error = "Birthday cannot be in the future";
+            else if (age < 13) error = "You must be at least 13 years old";
           }
         }
         break;
@@ -102,13 +85,8 @@ const Login = () => {
   const onChangeHandler = (event) => {
     const { name, value } = event.target;
     setData((prevData) => ({ ...prevData, [name]: value }));
-
-    // Real-time validation
     const error = validateField(name, value);
-    setErrors((prevErrors) => ({
-      ...prevErrors,
-      [name]: error,
-    }));
+    setErrors((prevErrors) => ({ ...prevErrors, [name]: error }));
   };
 
   const validateForm = () => {
@@ -135,34 +113,55 @@ const Login = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
-    if (!validateForm()) {
-      return;
-    }
+    if (!validateForm()) return;
 
-    if (state === "Sign Up") {
-      console.log("Account created with data:", data);
-      alert("Account created successfully!");
-      setState("Login");
-      setData({
-        name: "",
-        email: "",
-        password: "",
-        contactNo: "",
-        address: "",
-        gender: "",
-        birthday: "",
+    const url =
+      state === "Sign Up"
+        ? "http://localhost:5000/api/user/register"
+        : "http://localhost:5000/api/user/login";
+    const payload =
+      state === "Sign Up"
+        ? data
+        : { email: data.email, password: data.password };
+
+    try {
+      const response = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
       });
-      setErrors({});
-    } else {
-      console.log("Login with data:", {
-        email: data.email,
-        password: data.password,
-      });
-      login("https://via.placeholder.com/40");
-      navigate("/");
+      const result = await response.json();
+
+      if (result.success) {
+        if (state === "Sign Up") {
+          alert("Account created successfully!");
+          setState("Login");
+          setData({
+            name: "",
+            email: "",
+            password: "",
+            contactNo: "",
+            address: "",
+            gender: "",
+            birthday: "",
+          });
+          setErrors({});
+        } else {
+          login(result.token);
+          navigate("/");
+        }
+      } else {
+        console.error("Backend error:", result.message); // Log the error for debugging
+        alert(result.message);
+      }
+    } catch (error) {
+      console.error("Fetch error:", error); // Log the fetch error for debugging
+      alert(
+        "An error occurred while connecting to the server. Please ensure the backend server is running on port 5000."
+      );
     }
   };
 
@@ -208,7 +207,6 @@ const Login = () => {
                   <p className="text-red-500 text-xs mt-1">{errors.name}</p>
                 )}
               </div>
-
               <div className="w-full">
                 <label className="block text-sm font-medium text-zinc-700 mb-1">
                   Contact Number
@@ -227,7 +225,6 @@ const Login = () => {
                   </p>
                 )}
               </div>
-
               <div className="w-full">
                 <label className="block text-sm font-medium text-zinc-700 mb-1">
                   Address
@@ -244,7 +241,6 @@ const Login = () => {
                   <p className="text-red-500 text-xs mt-1">{errors.address}</p>
                 )}
               </div>
-
               <div className="w-full">
                 <label className="block text-sm font-medium text-zinc-700 mb-1">
                   Gender
@@ -265,7 +261,6 @@ const Login = () => {
                   <p className="text-red-500 text-xs mt-1">{errors.gender}</p>
                 )}
               </div>
-
               <div className="w-full">
                 <label className="block text-sm font-medium text-zinc-700 mb-1">
                   Birthday
@@ -300,7 +295,6 @@ const Login = () => {
               <p className="text-red-500 text-xs mt-1">{errors.email}</p>
             )}
           </div>
-
           <div className="w-full">
             <label className="block text-sm font-medium text-zinc-700 mb-1">
               Password
@@ -317,14 +311,12 @@ const Login = () => {
               <p className="text-red-500 text-xs mt-1">{errors.password}</p>
             )}
           </div>
-
           <button
             type="submit"
             className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2.5 px-4 rounded-lg transition-colors duration-300 mt-2 shadow-md hover:shadow-lg active:scale-95"
           >
             {state === "Sign Up" ? "Create Account" : "Login"}
           </button>
-
           <div className="text-center w-full mt-4 text-sm">
             {state === "Sign Up" ? (
               <p className="text-zinc-600">
