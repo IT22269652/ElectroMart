@@ -116,7 +116,7 @@ const Feedback = () => {
 
       if (response.ok) {
         alert("🎉 Feedback submitted successfully!");
-        navigate("/feedbackdetails");
+        navigate("/");
         setName("");
         setEmail("");
         setContactNo("");

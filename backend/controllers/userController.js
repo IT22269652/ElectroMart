@@ -8,16 +8,20 @@ const loginUser = async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    const user = await userModel.findOne({ email });
+    if (!email || !password) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Email and password are required" });
+    }
 
+    const user = await userModel.findOne({ email });
     if (!user) {
       return res
         .status(400)
-        .json({ success: false, message: "User Doesn't exist" });
+        .json({ success: false, message: "User doesn't exist" });
     }
 
     const isMatch = await bcryptjs.compare(password, user.password);
-
     if (!isMatch) {
       return res
         .status(400)
@@ -27,8 +31,10 @@ const loginUser = async (req, res) => {
     const token = createToken(user._id);
     res.status(200).json({ success: true, token });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ success: false, message: "Server error" });
+    console.error("Login error:", error);
+    res
+      .status(500)
+      .json({ success: false, message: "Server error during login" });
   }
 };
 
@@ -38,50 +44,75 @@ const registerUser = async (req, res) => {
     req.body;
 
   try {
+    // Check for missing fields
+    if (
+      !name ||
+      !email ||
+      !password ||
+      !contactNo ||
+      !address ||
+      !gender ||
+      !birthday
+    ) {
+      return res
+        .status(400)
+        .json({ success: false, message: "All fields are required" });
+    }
+
     // Check if user already exists
     const exists = await userModel.findOne({ email });
     if (exists) {
-      return res.json({ success: false, message: "User already exists" });
+      return res
+        .status(400)
+        .json({ success: false, message: "User already exists" });
     }
 
     // Validate email format
     if (!validator.isEmail(email)) {
-      return res.json({
-        success: false,
-        message: "Please enter a valid email",
-      });
+      return res
+        .status(400)
+        .json({ success: false, message: "Please enter a valid email" });
     }
 
     // Validate password strength
     if (password.length < 8) {
-      return res.json({
+      return res.status(400).json({
         success: false,
         message: "Please enter a strong password (at least 8 characters)",
       });
     }
 
-    // Validate contact number (basic validation)
-    if (!validator.isMobilePhone(contactNo)) {
-      return res.json({
+    // Validate contact number
+    if (!validator.isMobilePhone(contactNo, "any", { strictMode: false })) {
+      return res
+        .status(400)
+        .json({
+          success: false,
+          message: "Please enter a valid contact number",
+        });
+    }
+
+    // Validate gender
+    if (
+      !["male", "female", "other", "prefer-not-to-say"].includes(
+        gender.toLowerCase()
+      )
+    ) {
+      return res.status(400).json({
         success: false,
-        message: "Please enter a valid contact number",
+        message:
+          "Please select a valid gender (Male, Female, Other, Prefer not to say)",
       });
     }
 
-    // Validate gender (basic validation)
-    if (!["male", "female", "other"].includes(gender.toLowerCase())) {
-      return res.json({
-        success: false,
-        message: "Please select a valid gender (Male, Female, Other)",
-      });
-    }
-
-    // Validate birthday (basic validation)
+    // Validate birthday
     if (!validator.isDate(birthday)) {
-      return res.json({
-        success: false,
-        message: "Please enter a valid birthday (YYYY-MM-DD)",
-      });
+      return res
+        .status(400)
+        .json({
+          success: false,
+          message: "Please enter a valid birthday (YYYY-MM-DD)",
+        });
     }
 
     // Hash the password
@@ -96,16 +127,36 @@ const registerUser = async (req, res) => {
       contactNo,
       address,
       gender,
-      birthday: new Date(birthday), // Convert to Date object
+      birthday: new Date(birthday),
     });
 
     // Save the user to the database
     const user = await newUser.save();
     const token = createToken(user._id);
-    res.json({ success: true, token });
+    res.status(201).json({ success: true, token });
   } catch (error) {
-    console.log(error);
-    res.json({ success: false, message: "Error" });
+    console.error("Register error:", error);
+    res
+      .status(500)
+      .json({ success: false, message: "Server error during registration" });
+  }
+};
+
+// Fetch user profile
+const getUserProfile = async (req, res) => {
+  try {
+    const user = await userModel.findById(req.user.id).select("-password");
+    if (!user) {
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found" });
+    }
+    res.json({ success: true, user });
+  } catch (error) {
+    console.error("Profile fetch error:", error);
+    res
+      .status(500)
+      .json({ success: false, message: "Server error while fetching profile" });
   }
 };
 
@@ -114,4 +165,4 @@ const createToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: "1h" });
 };
 
-export { loginUser, registerUser };
+export { loginUser, registerUser, getUserProfile };
