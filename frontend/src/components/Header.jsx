@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { assets } from "../assets/assets";
@@ -9,8 +8,6 @@ const Header = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selectedCategories, setSelectedCategories] = useState([]);
   const navigate = useNavigate();
-
-  // Create a reference to the Featured Products section
   const featuredProductsRef = useRef(null);
 
   // Slideshow effect for the header images
@@ -24,7 +21,6 @@ const Header = () => {
   const categories = ["TV", "Camera", "Laptop", "iPhone", "Other Items"];
 
   const products = [
-
     { id: "1", name: "Smart TV", price: "$499", image: assets.LGTV01, category: "TV" },
     { id: "2", name: "LG 4K TV", price: "$699", image: assets.LGTV02, category: "TV" },
     { id: "3", name: "OLED TV", price: "$999", image: assets.SamsungTV01, category: "TV" },
@@ -55,14 +51,6 @@ const Header = () => {
     ? products.filter((product) => selectedCategories.includes(product.category))
     : products;
 
-
-  const filteredProducts =
-    selectedCategories.length > 0
-      ? products.filter((product) =>
-          selectedCategories.includes(product.category)
-        )
-      : products;
-
   const handleCategoryChange = (category) => {
     setSelectedCategories((prev) =>
       prev.includes(category)
@@ -75,7 +63,6 @@ const Header = () => {
     navigate(`/product/${productId}`);
   };
 
-  // Function to scroll to the Featured Products section
   const scrollToFeaturedProducts = () => {
     featuredProductsRef.current.scrollIntoView({ behavior: "smooth" });
   };
@@ -89,16 +76,6 @@ const Header = () => {
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight">
             🛒 Shop the Latest Electronics
           </h1>
-          <br />
-          <div className="flex flex-col md:flex-row items-center gap-3 text-white text-sm font-light">
-            <img className="w-28" src={assets.group_profiles} alt="Profiles" />
-            <p className="mt-2 text-sm md:text-base">
-              Explore the newest gadgets, smartphones, and accessories at
-              unbeatable prices.
-            </p>
-          </div>
-        </div>
-          </h1>
           <div className="flex flex-col md:flex-row items-center gap-4 text-white text-sm font-light mt-4">
             <img
               className="w-24 md:w-28"
@@ -110,7 +87,6 @@ const Header = () => {
               unbeatable prices.
             </p>
           </div>
-          {/* Shop Now button that scrolls to Featured Products */}
           <button
             className="mt-6 px-6 py-3 bg-white text-blue-600 font-semibold rounded-full shadow-md hover:bg-gray-100 transition duration-300"
             onClick={scrollToFeaturedProducts}
@@ -119,6 +95,7 @@ const Header = () => {
           </button>
         </div>
 
+        {/* Right Side: Image Slider */}
         <div className="relative w-1/2 h-full flex items-center justify-center">
           {images.map((image, index) => (
             <img
@@ -133,28 +110,26 @@ const Header = () => {
         </div>
       </div>
 
-        {/* Image Slider Navigation Dots */}
-        <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
-          {images.map((_, index) => (
-            <div
-              key={index}
-              className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                index === currentIndex ? "bg-white scale-125" : "bg-gray-300"
-              }`}
-            />
-          ))}
-        </div>
+      {/* Image Slider Navigation Dots */}
+      <div className="flex justify-center mt-4 space-x-2">
+        {images.map((_, index) => (
+          <div
+            key={index}
+            className={`w-3 h-3 rounded-full transition-all duration-300 ${
+              index === currentIndex ? "bg-blue-600 scale-125" : "bg-gray-300"
+            }`}
+          />
+        ))}
+      </div>
 
-        {/* Category Section */}
-        <div className="mt-8 text-center px-6">
-          <h2 className="text-3xl font-bold text-gray-800">Find by Category</h2>
-        </div>
-
-        <div className="mt-8 flex flex-wrap gap-4 px-6 justify-center">
+      {/* Category Section */}
+      <div className="mt-8 text-center px-6">
+        <h2 className="text-3xl font-bold text-gray-800">Find by Category</h2>
+        <div className="mt-6 flex flex-wrap gap-4 justify-center">
           {categories.map((category, index) => (
             <label
               key={index}
-              className={`flex items-center space-x-2 p-3 rounded-lg shadow-md cursor-pointer ${
+              className={`flex items-center space-x-2 p-3 rounded-lg shadow-md hover:shadow-lg transition-shadow cursor-pointer ${
                 selectedCategories.includes(category)
                   ? "bg-blue-600 text-white"
                   : "bg-white text-gray-700"
@@ -162,33 +137,29 @@ const Header = () => {
             >
               <input
                 type="checkbox"
+                value={category}
                 checked={selectedCategories.includes(category)}
                 onChange={() => handleCategoryChange(category)}
-                className="h-5 w-5 text-blue-600 rounded"
+                className="form-checkbox h-5 w-5 text-blue-600 rounded"
               />
               <span className="font-medium">{category}</span>
             </label>
           ))}
         </div>
-            />
-            <span className="font-medium">{category}</span>
-          </label>
-        ))}
       </div>
 
-<div className="mt-8 text-center px-6">
-  <h2 className="text-3xl font-bold text-gray-800">
-    {selectedCategories.length > 0
-      ? `${selectedCategories.join(", ")} Products`
-      : "Find by Category"}
-  </h2>
-</div>
+      {/* Featured Products Section */}
+      <div ref={featuredProductsRef} className="mt-12 px-6">
+        <h2 className="text-3xl font-bold text-gray-800 text-center">
+          {selectedCategories.length > 0
+            ? `${selectedCategories.join(", ")} Products`
+            : "Featured Products"}
         </h2>
         <div className="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {filteredProducts.map((product) => (
             <div
               key={product.id}
-              className="bg-white p-4 rounded-lg shadow-md cursor-pointer hover:shadow-lg"
+              className="bg-white p-4 rounded-lg shadow-md text-center cursor-pointer hover:shadow-lg transition-transform transform hover:scale-105"
               onClick={() => handleProductClick(product.id)}
             >
               <img
@@ -199,53 +170,6 @@ const Header = () => {
               <h3 className="text-xl font-semibold text-gray-800">
                 {product.name}
               </h3>
-              <p className="text-gray-600 mt-2">{product.price}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      <div className="mt-8 flex flex-wrap gap-4 px-6 justify-center">
-        {categories.map((category, index) => (
-          <label
-            key={index}
-            className={`flex items-center space-x-2 p-3 rounded-lg shadow-md hover:shadow-lg transition-shadow cursor-pointer ${
-              selectedCategories.includes(category)
-                ? "bg-blue-600 text-white"
-                : "bg-white text-gray-700"
-            }`}
-          >
-            <input
-              type="checkbox"
-              value={category}
-              checked={selectedCategories.includes(category)}
-              onChange={() => handleCategoryChange(category)}
-              className="form-checkbox h-5 w-5 text-blue-600 rounded"
-            />
-            <span className="font-medium">{category}</span>
-          </label>
-        ))}
-      </div>
-
-      <div className="mt-12 px-6">
-        <h2 className="text-3xl font-bold text-gray-800 text-center">
-          {selectedCategories.length > 0
-            ? `${selectedCategories.join(", ")} Products`
-            : "Featured Products"}
-        </h2>
-        <div className="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {filteredProducts.map((product, index) => (
-            <div
-              key={index}
-              className="bg-white p-4 rounded-lg shadow-md text-center cursor-pointer hover:shadow-lg transition-transform transform hover:scale-105"
-              onClick={() => handleProductClick(product.id)}
-            >
-              <img
-                src={product.image}
-                alt={product.name}
-                className="w-full h-48 object-contain mb-4"
-              />
-              <h3 className="text-xl font-semibold text-gray-800">{product.name}</h3>
               <p className="text-gray-600 mt-2">{product.price}</p>
             </div>
           ))}
