@@ -1,0 +1,88 @@
+{
+
+  "hash": "fad162aa",
+  "configHash": "7195b958",
+  "lockfileHash": "6ae01488",
+  "browserHash": "a37b05d3",
+  "optimized": {
+    "react": {
+      "src": "../../node_modules/react/index.js",
+      "file": "react.js",
+      "fileHash": "4b8d3dea",
+      "needsInterop": true
+    },
+    "react-dom/client": {
+      "src": "../../node_modules/react-dom/client.js",
+      "file": "react-dom_client.js",
+      "fileHash": "4a92f37c",
+      "needsInterop": true
+    },
+    "react-router-dom": {
+      "src": "../../node_modules/react-router-dom/dist/index.mjs",
+      "file": "react-router-dom.js",
+      "fileHash": "a989e988",
+      "needsInterop": false
+    },
+    "regenerator-runtime/runtime": {
+      "src": "../../node_modules/regenerator-runtime/runtime.js",
+      "file": "regenerator-runtime_runtime.js",
+      "fileHash": "c8bca4bb",
+      "needsInterop": true
+    },
+    "react-icons/fa": {
+      "src": "../../node_modules/react-icons/fa/index.mjs",
+      "file": "react-icons_fa.js",
+      "fileHash": "0755f23b",
+      "needsInterop": false
+    },
+    "jspdf": {
+      "src": "../../node_modules/jspdf/dist/jspdf.es.min.js",
+      "file": "jspdf.js",
+      "fileHash": "defd03d9",
+      "needsInterop": false
+    },
+    "jspdf-autotable": {
+      "src": "../../node_modules/jspdf-autotable/dist/jspdf.plugin.autotable.mjs",
+      "file": "jspdf-autotable.js",
+      "fileHash": "7abd3668",
+      "needsInterop": false
+    },
+    "react-speech-recognition": {
+      "src": "../../node_modules/react-speech-recognition/dist/index.js",
+      "file": "react-speech-recognition.js",
+      "fileHash": "fa36e46e",
+      "needsInterop": false
+    }
+  },
+  "chunks": {
+    "html2canvas.esm-NSBB4H3J": {
+      "file": "html2canvas__esm-NSBB4H3J.js"
+    },
+    "purify.es-2AIFHD2L": {
+      "file": "purify__es-2AIFHD2L.js"
+    },
+    "index.es-ZBUKH2QP": {
+      "file": "index__es-ZBUKH2QP.js"
+    },
+    "chunk-DBUGNT2R": {
+      "file": "chunk-DBUGNT2R.js"
+    },
+    "chunk-SITVF2AJ": {
+      "file": "chunk-SITVF2AJ.js"
+    },
+    "chunk-VUPZMC2T": {
+      "file": "chunk-VUPZMC2T.js"
+    },
+    "chunk-EQCVQC35": {
+      "file": "chunk-EQCVQC35.js"
+    }
+  }
+
+  "hash": "65a4f941",
+  "configHash": "607b6b8b",
+  "lockfileHash": "8e66176a",
+  "browserHash": "9eb55f97",
+  "optimized": {},
+  "chunks": {}
+
+}
