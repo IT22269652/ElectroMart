@@ -1,26 +1,20 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { assets } from "../assets/assets";
-
-const images = [assets.img1, assets.img2, assets.img3, assets.img5];
+import VoiceNavigation from "./VoiceNavigation";
 
 const Header = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selectedCategories, setSelectedCategories] = useState([]);
+  const [voiceFeedback, setVoiceFeedback] = useState(null);
   const navigate = useNavigate();
   const featuredProductsRef = useRef(null);
 
-  // Slideshow effect for the header images
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length);
-    }, 3000);
-    return () => clearInterval(interval);
-  }, []);
-
+  const images = [assets.img1, assets.img2, assets.img3, assets.img5];
   const categories = ["TV", "Camera", "Laptop", "iPhone", "Other Items"];
 
   const products = [
+    // TV Products
     {
       id: "1",
       name: "Smart TV",
@@ -49,6 +43,7 @@ const Header = () => {
       image: assets.SonyTV01,
       category: "TV",
     },
+    // Camera Products
     {
       id: "5",
       name: "DSLR Camera",
@@ -77,6 +72,7 @@ const Header = () => {
       image: assets.camera04,
       category: "Camera",
     },
+    // Laptop Products
     {
       id: "9",
       name: "Gaming Laptop",
@@ -105,6 +101,7 @@ const Header = () => {
       image: assets.laptop04,
       category: "Laptop",
     },
+    // iPhone Products
     {
       id: "13",
       name: "iPhone 14 Pro",
@@ -133,6 +130,7 @@ const Header = () => {
       image: assets.iphone04,
       category: "iPhone",
     },
+    // Other Items
     {
       id: "17",
       name: "Wireless Earbuds",
@@ -191,6 +189,13 @@ const Header = () => {
     },
   ];
 
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length);
+    }, 3000);
+    return () => clearInterval(interval);
+  }, [images.length]);
+
   const filteredProducts =
     selectedCategories.length > 0
       ? products.filter((product) =>
@@ -211,15 +216,39 @@ const Header = () => {
   };
 
   const scrollToFeaturedProducts = () => {
-    featuredProductsRef.current.scrollIntoView({ behavior: "smooth" });
+    featuredProductsRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  const handleVoiceCommand = (command, handled) => {
+    if (handled) {
+      setVoiceFeedback(`Executed: "${command}"`);
+      setTimeout(() => setVoiceFeedback(null), 3000);
+    }
   };
 
   return (
-    <div>
-      {/* Header Section */}
+    <div className="relative">
+      {/* Voice Feedback Toast */}
+      {voiceFeedback && (
+        <div className="fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded shadow-lg z-50 animate-fade">
+          {voiceFeedback}
+        </div>
+      )}
+
+      {/* Hero Section */}
       <div className="relative w-full h-[450px] md:h-[500px] lg:h-[550px] bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl flex items-center justify-between px-8 md:px-12 lg:px-16 overflow-hidden">
-        {/* Left Side: Text and Call to Action */}
-        <div className="text-white max-w-md">
+        {/* Voice Navigation Button */}
+        <div className="absolute top-4 right-4 z-10">
+          <VoiceNavigation
+            categories={categories}
+            selectedCategories={selectedCategories}
+            setSelectedCategories={setSelectedCategories}
+            onVoiceCommand={handleVoiceCommand}
+          />
+        </div>
+
+        {/* Hero Content */}
+        <div className="text-white max-w-md z-10">
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight">
             🛒 Shop the Latest Electronics
           </h1>
@@ -227,14 +256,13 @@ const Header = () => {
             <img
               className="w-24 md:w-28"
               src={assets.group_profiles}
-              alt="Profiles"
+              alt="Happy customers"
             />
             <p className="mt-2 text-sm md:text-base lg:text-lg">
               Explore the newest gadgets, smartphones, and accessories at
               unbeatable prices.
             </p>
           </div>
-          {/* Shop Now button that scrolls to Featured Products */}
           <button
             className="mt-6 px-6 py-3 bg-white text-blue-600 font-semibold rounded-full shadow-md hover:bg-gray-100 transition duration-300"
             onClick={scrollToFeaturedProducts}
@@ -243,81 +271,85 @@ const Header = () => {
           </button>
         </div>
 
-        {/* Right Side: Image Slider with Navigation Dots in the Middle */}
+        {/* Image Slideshow with Navigation Dots */}
         <div className="relative w-1/2 h-full flex items-center justify-center">
           {images.map((image, index) => (
             <img
               key={index}
               src={image}
-              alt={`Slide ${index + 1}`}
+              alt={`Featured product ${index + 1}`}
               className={`absolute w-auto h-full object-contain transition-opacity duration-1000 ${
                 index === currentIndex ? "opacity-100" : "opacity-0"
               }`}
             />
           ))}
-          {/* Navigation Dots Centered in the Middle of the Image */}
-          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex space-x-2">
+          <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex space-x-2">
             {images.map((_, index) => (
-              <div
+              <button
                 key={index}
-                className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                className={`w-3 h-3 rounded-full transition-all ${
                   index === currentIndex ? "bg-white scale-125" : "bg-gray-300"
                 }`}
+                aria-label={`Go to slide ${index + 1}`}
+                onClick={() => setCurrentIndex(index)}
               />
             ))}
           </div>
         </div>
       </div>
 
-      {/* Category Section */}
-      <div className="mt-8 text-center px-6">
-        <h2 className="text-3xl font-bold text-gray-800">Find by Category</h2>
-        <div className="mt-6 flex flex-wrap gap-4 justify-center">
-          {categories.map((category, index) => (
-            <label
-              key={index}
-              className={`flex items-center space-x-2 p-3 rounded-lg shadow-md hover:shadow-lg transition-shadow cursor-pointer ${
+      {/* Category Filter Section */}
+      <div className="mt-12 px-6">
+        <h2 className="text-3xl font-bold text-gray-800 text-center mb-8">
+          Shop by Category
+        </h2>
+        <div className="flex flex-wrap justify-center gap-4">
+          {categories.map((category) => (
+            <button
+              key={category}
+              className={`px-6 py-3 rounded-full font-medium transition-colors ${
                 selectedCategories.includes(category)
                   ? "bg-blue-600 text-white"
-                  : "bg-white text-gray-700"
+                  : "bg-gray-100 text-gray-800 hover:bg-gray-200"
               }`}
+              onClick={() => handleCategoryChange(category)}
             >
-              <input
-                type="checkbox"
-                value={category}
-                checked={selectedCategories.includes(category)}
-                onChange={() => handleCategoryChange(category)}
-                className="form-checkbox h-5 w-5 text-blue-600 rounded"
-              />
-              <span className="font-medium">{category}</span>
-            </label>
+              {category}
+            </button>
           ))}
         </div>
       </div>
 
       {/* Featured Products Section */}
-      <div ref={featuredProductsRef} className="mt-12 px-6">
-        <h2 className="text-3xl font-bold text-gray-800 text-center">
+      <div ref={featuredProductsRef} className="mt-12 px-6 pb-16">
+        <h2 className="text-3xl font-bold text-gray-800 text-center mb-8">
           {selectedCategories.length > 0
             ? `${selectedCategories.join(", ")} Products`
             : "Featured Products"}
         </h2>
-        <div className="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
           {filteredProducts.map((product) => (
             <div
               key={product.id}
-              className="bg-white p-4 rounded-lg shadow-md text-center cursor-pointer hover:shadow-lg transition-transform transform hover:scale-105"
+              className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-transform hover:-translate-y-1 cursor-pointer"
               onClick={() => handleProductClick(product.id)}
             >
-              <img
-                src={product.image}
-                alt={product.name}
-                className="w-full h-48 object-contain mb-4"
-              />
-              <h3 className="text-xl font-semibold text-gray-800">
-                {product.name}
-              </h3>
-              <p className="text-gray-600 mt-2">{product.price}</p>
+              <div className="h-60 p-4 flex items-center justify-center bg-gray-50">
+                <img
+                  src={product.image}
+                  alt={product.name}
+                  className="h-full object-contain"
+                />
+              </div>
+              <div className="p-4">
+                <h3 className="text-lg font-semibold text-gray-800 mb-1">
+                  {product.name}
+                </h3>
+                <p className="text-blue-600 font-medium">{product.price}</p>
+                <button className="mt-3 w-full py-2 bg-blue-100 text-blue-600 rounded-md hover:bg-blue-200 transition">
+                  View Details
+                </button>
+              </div>
             </div>
           ))}
         </div>

@@ -1,4 +1,5 @@
 {
+
   "hash": "fad162aa",
   "configHash": "7195b958",
   "lockfileHash": "6ae01488",
@@ -76,4 +77,12 @@
       "file": "chunk-EQCVQC35.js"
     }
   }
+
+  "hash": "65a4f941",
+  "configHash": "607b6b8b",
+  "lockfileHash": "8e66176a",
+  "browserHash": "9eb55f97",
+  "optimized": {},
+  "chunks": {}
+
 }
