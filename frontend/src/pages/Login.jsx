@@ -1,6 +1,7 @@
 import React, { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../components/AuthContext";
+import VoiceInput from "../components/VoiceInput";
 
 const Login = () => {
   const [state, setState] = useState("Sign Up");
@@ -14,12 +15,37 @@ const Login = () => {
     birthday: "",
   });
   const [errors, setErrors] = useState({});
+  const [focusedField, setFocusedField] = useState(null);
   const navigate = useNavigate();
   const { login } = useContext(AuthContext);
 
-  const validateField = (name, value) => {
+  const handleFocus = (fieldName) => {
+    setFocusedField(fieldName);
+  };
+
+  const handleBlur = () => {
+    setFocusedField(null);
+  };
+
+  const handleVoiceResult = (result) => {
+    setData((prevData) => ({ ...prevData, name: result }));
+    setErrors((prevErrors) => ({ ...prevErrors, name: "" }));
+  };
+
+  const validateField = (fieldName, value) => {
     let error = "";
-    switch (name) {
+
+    switch (fieldName) {
+      case "name":
+        if (state === "Sign Up") {
+          if (!value.trim()) error = "Name is required";
+          else if (value.length < 2) error = "Name must be at least 2 characters";
+          else if (value.length > 50)
+            error = "Name must be less than 50 characters";
+          else if (!/^[A-Za-z\s]+$/.test(value))
+            error = "Name should contain only letters and spaces";
+        }
+        break;
       case "email":
         if (!value.trim()) error = "Email is required";
         else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value))
@@ -31,17 +57,6 @@ const Login = () => {
           error = "Password must be at least 8 characters";
         else if (value.length > 20)
           error = "Password must be less than 20 characters";
-        break;
-      case "name":
-        if (state === "Sign Up") {
-          if (!value.trim()) error = "Name is required";
-          else if (value.length < 2)
-            error = "Name must be at least 2 characters";
-          else if (value.length > 50)
-            error = "Name must be less than 50 characters";
-          else if (!/^[A-Za-z\s]+$/.test(value))
-            error = "Name should contain only alphabets and spaces";
-        }
         break;
       case "contactNo":
         if (state === "Sign Up") {
@@ -154,11 +169,11 @@ const Login = () => {
           navigate("/");
         }
       } else {
-        console.error("Backend error:", result.message); // Log the error for debugging
+        console.error("Backend error:", result.message);
         alert(result.message);
       }
     } catch (error) {
-      console.error("Fetch error:", error); // Log the fetch error for debugging
+      console.error("Fetch error:", error);
       alert(
         "An error occurred while connecting to the server. Please ensure the backend server is running on port 5000."
       );
@@ -191,7 +206,7 @@ const Login = () => {
 
           {state === "Sign Up" && (
             <>
-              <div className="w-full">
+              <div className="relative">
                 <label className="block text-sm font-medium text-zinc-700 mb-1">
                   Full Name
                 </label>
@@ -200,9 +215,16 @@ const Login = () => {
                   name="name"
                   type="text"
                   onChange={onChangeHandler}
+                  onFocus={() => handleFocus("name")}
+                  onBlur={handleBlur}
                   value={data.name}
                   placeholder="your name"
                 />
+                {focusedField === "name" && (
+                  <div className="absolute right-2 top-8">
+                    <VoiceInput onVoiceResult={handleVoiceResult} />
+                  </div>
+                )}
                 {errors.name && (
                   <p className="text-red-500 text-xs mt-1">{errors.name}</p>
                 )}
@@ -220,9 +242,7 @@ const Login = () => {
                   placeholder="1234567890"
                 />
                 {errors.contactNo && (
-                  <p className="text-red-500 text-xs mt-1">
-                    {errors.contactNo}
-                  </p>
+                  <p className="text-red-500 text-xs mt-1">{errors.contactNo}</p>
                 )}
               </div>
               <div className="w-full">
