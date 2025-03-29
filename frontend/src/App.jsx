@@ -1,3 +1,4 @@
+// src/App.jsx
 import "regenerator-runtime/runtime";
 import React from "react";
 import { Route, Routes } from "react-router-dom";
@@ -13,21 +14,13 @@ import Feedback from "./pages/Feedback";
 import Footer from "./components/Footer";
 import Feedbackdetails from "./pages/Feedbackdetails";
 import Updatefeedback from "./pages/Updatefeedback";
-
 import ProductDetails from "./pages/ProductHandling/ProductDetails";
 import Header from "./components/Header";
 import AdminLogin from "./pages/ProductHandling/AdminLogin";
 import AdminDashboard from "./pages/ProductHandling/AdminDashboard";
 import ProductForm from "./pages/ProductHandling/ProductForm";
 import Admin from "./pages/ProductHandling/Admin";
-
 import Privacy from "./pages/Privacy";
-import Cart from "./pages/Cart";
-import Delivery from "./pages/Delivery";
-import Payment from "./pages/Payment";
-import DeliveryManagement from "./pages/DeliveryManagement";
-import Order from "./pages/Order";
-import PaymentManagement from "./pages/paymentMangement";
 import ListItems from "./pages/ProductHandling/ListItems";
 
 const App = () => {
@@ -46,24 +39,13 @@ const App = () => {
             <Route path="/my-orders" element={<MyOrders />} />
             <Route path="/feedbackdetails" element={<Feedbackdetails />} />
             <Route path="/updatefeedback" element={<Updatefeedback />} />
-            <Route path="/cart" element={<Cart />} />
-            <Route path="/delivery" element={<Delivery />} />
-            <Route path="/payment" element={<Payment />} />
-            <Route path="/delivery-mangement" element={<DeliveryManagement/>} />
-            <Route path="/order" element={<Order/>} />
-            <Route path="/payment-mangement" element={<PaymentManagement/>} />
-
-
-
             <Route path="/productdetails" element={<ProductDetails />} />
-            <Route path="/" element={<Header />} />
             <Route path="/product/:productId" element={<ProductDetails />} />
             <Route path="/admin-login" element={<AdminLogin />} />
             <Route path="/admin" element={<Admin />} />
             <Route path="/admin-dashboard" element={<AdminDashboard />} />
             <Route path="/admin/add-items" element={<ProductForm />} />
             <Route path="/admin/list-items" element={<ListItems />} />
-
             <Route path="/privacy" element={<Privacy />} />
           </Routes>
         </div>
