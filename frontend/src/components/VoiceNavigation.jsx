@@ -1,3 +1,4 @@
+// src/components/VoiceNavigation.jsx
 import React from "react";
 import SpeechRecognition, {
   useSpeechRecognition,
@@ -23,7 +24,6 @@ const VoiceNavigation = ({
       const matchedCategory = categories.find(
         (cat) => cat.toLowerCase() === category
       );
-
       if (matchedCategory && !selectedCategories.includes(matchedCategory)) {
         setSelectedCategories((prev) => [...prev, matchedCategory]);
         handled = true;
@@ -35,7 +35,6 @@ const VoiceNavigation = ({
       const matchedCategory = categories.find(
         (cat) => cat.toLowerCase() === category
       );
-
       if (matchedCategory) {
         setSelectedCategories((prev) =>
           prev.filter((cat) => cat !== matchedCategory)
@@ -51,7 +50,7 @@ const VoiceNavigation = ({
       setSelectedCategories([]);
       handled = true;
     }
-    // Navigation commands
+    // Navigation commands (retained from original)
     else {
       if (
         lowerCaseCommand.includes("home") ||
@@ -98,7 +97,7 @@ const VoiceNavigation = ({
       onVoiceCommand(transcript, handled);
       resetTranscript();
     }
-  }, [transcript, listening, resetTranscript]);
+  }, [transcript, listening, resetTranscript, onVoiceCommand]);
 
   if (!SpeechRecognition.browserSupportsSpeechRecognition()) {
     return null;

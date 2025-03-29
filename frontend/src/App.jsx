@@ -1,3 +1,4 @@
+// src/App.jsx
 import "regenerator-runtime/runtime";
 import React from "react";
 import { Route, Routes } from "react-router-dom";
@@ -13,22 +14,17 @@ import Feedback from "./pages/Feedback";
 import Footer from "./components/Footer";
 import Feedbackdetails from "./pages/Feedbackdetails";
 import Updatefeedback from "./pages/Updatefeedback";
-
 import ProductDetails from "./pages/ProductHandling/ProductDetails";
 import Header from "./components/Header";
 import AdminLogin from "./pages/ProductHandling/AdminLogin";
 import AdminDashboard from "./pages/ProductHandling/AdminDashboard";
 import ProductForm from "./pages/ProductHandling/ProductForm";
 import Admin from "./pages/ProductHandling/Admin";
-
 import Privacy from "./pages/Privacy";
-
+import ListItems from "./pages/ProductHandling/ListItems";
 
 const App = () => {
-  
-  
   return (
-    
     <AuthProvider>
       <div className="mx-4 sm:mx-[10%] flex flex-col min-h-screen">
         <Navbar />
@@ -43,21 +39,14 @@ const App = () => {
             <Route path="/my-orders" element={<MyOrders />} />
             <Route path="/feedbackdetails" element={<Feedbackdetails />} />
             <Route path="/updatefeedback" element={<Updatefeedback />} />
-
-            <Route path="/productdetails" element={ProductDetails} />
-            <Route path="/" element={<Header />} />
+            <Route path="/productdetails" element={<ProductDetails />} />
             <Route path="/product/:productId" element={<ProductDetails />} />
             <Route path="/admin-login" element={<AdminLogin />} />
             <Route path="/admin" element={<Admin />} />
-            <Route 
-                path="/admin-dashboard" 
-                element={<AdminDashboard/>
-               } 
-            />
+            <Route path="/admin-dashboard" element={<AdminDashboard />} />
             <Route path="/admin/add-items" element={<ProductForm />} />
-
+            <Route path="/admin/list-items" element={<ListItems />} />
             <Route path="/privacy" element={<Privacy />} />
-
           </Routes>
         </div>
         <Footer />
