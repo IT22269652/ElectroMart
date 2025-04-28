@@ -265,57 +265,18 @@ const Navbar = () => {
                 }}
                 className="w-full py-3 bg-blue-500 text-white rounded-lg mt-4"
               >
-
-                CONTACT
-              </NavLink>
-              <NavLink
-                onClick={() => setShowMenu(false)}
-                to="/admin-login"
-                className="px-4 py-2 rounded hover:text-primary"
-              >
-                ADMIN LOGIN
-              </NavLink>
-            </ul>
-                Sign In
+                Sign in
               </button>
             )}
             <button
               onClick={() => setShowMenu(false)}
-              className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
+              className="absolute top-4 right-4 text-gray-600 hover:text-gray-800"
             >
-              ✕
+              ❌
             </button>
-
           </div>
         )}
       </div>
-
-      <style jsx>{`
-        @keyframes fadeIn {
-          from {
-            opacity: 0;
-            transform: translateY(-10px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-        @keyframes slideIn {
-          from {
-            transform: translateX(100%);
-          }
-          to {
-            transform: translateX(0);
-          }
-        }
-        .animate-fadeIn {
-          animation: fadeIn 0.2s ease-out;
-        }
-        .animate-slideIn {
-          animation: slideIn 0.3s ease-out;
-        }
-      `}</style>
     </div>
   );
 };
