@@ -1,198 +1,227 @@
-import React, { useState } from "react";
-import profilePic from "../assets/profile_pic.png";
+import React, { useState, useEffect, useContext } from "react";
+import { AuthContext } from "../components/AuthContext";
+import { useNavigate } from "react-router-dom";
+// Import icons from react-icons
+import { FaUser, FaEdit, FaSignOutAlt } from "react-icons/fa";
+// Import the upload area image from assets
+import uploadAreaImage from "../assets/upload_area.png"; // Adjust the path based on your project structure
 
 const MyProfile = () => {
-  const [userData, setUserData] = useState({
-    name: "Nuradha",
-    image: profilePic, // Default profile picture
-    email: "nuradha123@gmail.com",
-    phone: "0703406091",
-    address: {
-      line1: "nupe",
-      line2: "Matara",
-    },
-    gender: "Male",
-    dob: "2002-08-16",
-  });
+  const { token, logout } = useContext(AuthContext);
+  const [userData, setUserData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [profileImage, setProfileImage] = useState(null); // State for the uploaded image preview
+  const navigate = useNavigate();
 
-  const [isEdit, setIsEdit] = useState(false);
-  const [successMessage, setSuccessMessage] = useState(""); // State for success message
-  const [newImage, setNewImage] = useState(null); // State for the new image file
+  useEffect(() => {
+    const fetchUserData = async () => {
+      if (!token) {
+        navigate("/login");
+        return;
+      }
 
-  // Handle image upload
-  const handleImageChange = (e) => {
+      try {
+        const response = await fetch("http://localhost:5000/api/user/profile", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        const result = await response.json();
+        if (result.success) {
+          setUserData(result.user);
+          setProfileImage(result.user.profileImage || null); // Set initial profile image if available
+        } else {
+          setError(result.message);
+          if (
+            result.message === "Token expired" ||
+            result.message === "Invalid token"
+          ) {
+            logout();
+            navigate("/login");
+          }
+        }
+      } catch (err) {
+        setError("Failed to fetch profile data");
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUserData();
+  }, [token, navigate, logout]);
+
+  // Handle file upload
+  const handleImageUpload = async (e) => {
     const file = e.target.files[0];
     if (file) {
-      const imageUrl = URL.createObjectURL(file); // Create a temporary URL for the uploaded image
-      setNewImage(imageUrl); // Store the new image URL for preview
+      const formData = new FormData();
+      formData.append("profileImage", file);
+
+      try {
+        const response = await fetch(
+          "http://localhost:5000/api/user/profile/image",
+          {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+            body: formData,
+          }
+        );
+
+        const result = await response.json();
+        if (result.success) {
+          setProfileImage(URL.createObjectURL(file)); // Preview the uploaded image
+          setUserData({ ...userData, profileImage: result.imageUrl }); // Update userData with new image URL
+        } else {
+          setError("Failed to upload image");
+        }
+      } catch (err) {
+        setError("Error uploading image");
+        console.error(err);
+      }
     }
   };
 
-  // Handle saving the updated information
-  const handleSave = () => {
-    if (newImage) {
-      setUserData((prev) => ({ ...prev, image: newImage })); // Update the image in userData
-    }
-    setIsEdit(false); // Exit edit mode
-    setSuccessMessage("Profile Updated Successfully!"); // Show success message
-    setTimeout(() => setSuccessMessage(""), 3000); // Clear message after 3 seconds
-  };
+  if (loading) return <div className="text-center py-10">Loading...</div>;
+  if (error)
+    return <div className="text-center py-10 text-red-500">{error}</div>;
 
   return (
-    <div className="max-w-xl mx-auto bg-white shadow-lg rounded-lg p-6 space-y-6">
-      {/* Success Message */}
-      {successMessage && (
-        <div className="bg-green-100 text-green-700 p-3 rounded-lg flex items-center justify-between">
-          <p>{successMessage}</p>
+    <div className="min-h-screen flex items-center justify-center bg-gray-100 p-6">
+      <div className="bg-white rounded-lg shadow-md p-8 max-w-3xl w-full">
+        {/* Header */}
+        <div className="bg-blue-600 text-white text-center py-3 rounded-t-lg">
+          <h2 className="text-xl font-semibold">My Account</h2>
+        </div>
+
+        {/* Profile Section */}
+        <div className="flex items-center justify-between py-4 border-b">
+          <div className="flex items-center space-x-2">
+            <FaUser className="text-gray-700" />
+            <span className="text-gray-700 font-medium">Personal Details</span>
+          </div>
           <button
-            onClick={() => setSuccessMessage("")}
-            className="text-green-700"
+            onClick={() => navigate("/edit-profile")}
+            className="flex items-center space-x-1 text-blue-600 hover:underline"
           >
-            ✕
+            <FaEdit className="text-blue-600" />
+            <span>Edit Profile</span>
           </button>
         </div>
-      )}
 
-      <div className="flex items-center space-x-6">
-        <div className="relative">
-          <img
-            className="w-28 h-28 rounded-full border-4 border-primary"
-            src={newImage || userData.image} // Show the new image if uploaded, otherwise show the current one
-            alt="Profile"
-          />
-          {isEdit && (
-            <div className="absolute bottom-0 right-0">
-              <label className="bg-primary text-white px-2 py-1 rounded-full cursor-pointer text-sm">
-                Change
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleImageChange}
-                  className="hidden"
-                />
-              </label>
-            </div>
-          )}
-        </div>
-
-        {isEdit ? (
+        {/* Profile Picture with Upload */}
+        <div className="flex justify-center my-6 relative">
+          <div className="w-32 h-32 rounded-full overflow-hidden">
+            <img
+              src={profileImage || uploadAreaImage} // Use uploaded image or upload_area.png
+              alt="Profile"
+              className="w-full h-full object-cover"
+            />
+          </div>
           <input
-            className="text-2xl font-semibold border-b-2 focus:outline-none focus:border-primary"
-            type="text"
-            value={userData.name}
-            onChange={(e) =>
-              setUserData((prev) => ({ ...prev, name: e.target.value }))
-            }
+            type="file"
+            accept="image/*"
+            onChange={handleImageUpload}
+            className="absolute inset-0 opacity-0 cursor-pointer"
+            title="Click to upload a new profile picture"
           />
-        ) : (
-          <h2 className="text-2xl font-bold text-gray-800">{userData.name}</h2>
-        )}
-      </div>
+        </div>
 
-      <hr className="border-gray-300" />
-
-      <div className="space-y-4">
-        <h3 className="text-gray-500 font-semibold uppercase">
-          Contact Information
-        </h3>
-        <div className="grid grid-cols-2 gap-4 text-gray-700">
-          <p className="font-medium">Email:</p>
-          <p className="text-blue-600">{userData.email}</p>
-
-          <p className="font-medium">Phone:</p>
-          {isEdit ? (
-            <input
-              className="border-b focus:outline-none focus:border-primary"
-              type="text"
-              value={userData.phone}
-              onChange={(e) =>
-                setUserData((prev) => ({ ...prev, phone: e.target.value }))
-              }
-            />
-          ) : (
-            <p>{userData.phone}</p>
-          )}
-
-          <p className="font-medium">Address:</p>
-          {isEdit ? (
-            <div className="space-y-1">
-              <input
-                className="border-b focus:outline-none focus:border-primary w-full"
-                type="text"
-                value={userData.address.line1}
-                onChange={(e) =>
-                  setUserData((prev) => ({
-                    ...prev,
-                    address: { ...prev.address, line1: e.target.value },
-                  }))
-                }
-              />
-              <input
-                className="border-b focus:outline-none focus:border-primary w-full"
-                type="text"
-                value={userData.address.line2}
-                onChange={(e) =>
-                  setUserData((prev) => ({
-                    ...prev,
-                    address: { ...prev.address, line2: e.target.value },
-                  }))
-                }
-              />
+        {/* Profile Details - Split into Two Columns */}
+        {userData && (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Left Column */}
+            <div className="space-y-4">
+              <div className="flex flex-col">
+                <label className="text-gray-600 font-medium">FULL NAME</label>
+                <input
+                  type="text"
+                  value={userData.name}
+                  readOnly
+                  className="border rounded-lg p-2 bg-gray-100 text-gray-700"
+                />
+              </div>
+              <div className="flex flex-col">
+                <label className="text-gray-600 font-medium">EMAIL</label>
+                <input
+                  type="email"
+                  value={userData.email}
+                  readOnly
+                  className="border rounded-lg p-2 bg-gray-100 text-gray-700"
+                />
+              </div>
+              <div className="flex flex-col">
+                <label className="text-gray-600 font-medium">BIRTH DATE</label>
+                <input
+                  type="text"
+                  value={new Date(userData.birthday).toLocaleDateString()}
+                  readOnly
+                  className="border rounded-lg p-2 bg-gray-100 text-gray-700"
+                />
+              </div>
             </div>
-          ) : (
-            <p>
-              {userData.address.line1}, {userData.address.line2}
-            </p>
-          )}
+
+            {/* Right Column */}
+            <div className="space-y-4">
+              <div className="flex flex-col">
+                <label className="text-gray-600 font-medium">GENDER</label>
+                <input
+                  type="text"
+                  value={userData.gender}
+                  readOnly
+                  className="border rounded-lg p-2 bg-gray-100 text-gray-700"
+                />
+              </div>
+              <div className="flex flex-col">
+                <label className="text-gray-600 font-medium">ADDRESS</label>
+                <input
+                  type="text"
+                  value={userData.address}
+                  readOnly
+                  className="border rounded-lg p-2 bg-gray-100 text-gray-700"
+                />
+              </div>
+              <div className="flex flex-col">
+                <label className="text-gray-600 font-medium">
+                  PHONE NUMBER
+                </label>
+                <input
+                  type="text"
+                  value={userData.contactNo}
+                  readOnly
+                  className="border rounded-lg p-2 bg-gray-100 text-gray-700"
+                />
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Buttons */}
+        <div className="flex justify-between mt-6">
+          <button
+            onClick={() => navigate("/edit-profile")}
+            className="flex items-center space-x-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            <FaEdit />
+            <span>Edit Profile</span>
+          </button>
+          <button
+            onClick={() => {
+              logout();
+              navigate("/login");
+            }}
+            className="flex items-center space-x-2 bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-colors"
+          >
+            <FaSignOutAlt />
+            <span>Logout</span>
+          </button>
         </div>
-      </div>
-
-      <hr className="border-gray-300" />
-
-      <div className="space-y-4">
-        <h3 className="text-gray-500 font-semibold uppercase">
-          Basic Information
-        </h3>
-        <div className="grid grid-cols-2 gap-4 text-gray-700">
-          <p className="font-medium">Gender:</p>
-          {isEdit ? (
-            <select
-              className="border-b focus:outline-none focus:border-primary"
-              value={userData.gender}
-              onChange={(e) =>
-                setUserData((prev) => ({ ...prev, gender: e.target.value }))
-              }
-            >
-              <option value="Male">Male</option>
-              <option value="Female">Female</option>
-            </select>
-          ) : (
-            <p>{userData.gender}</p>
-          )}
-
-          <p className="font-medium">Birthday:</p>
-          {isEdit ? (
-            <input
-              className="border-b focus:outline-none focus:border-primary"
-              type="date"
-              value={userData.dob}
-              onChange={(e) =>
-                setUserData((prev) => ({ ...prev, dob: e.target.value }))
-              }
-            />
-          ) : (
-            <p>{userData.dob}</p>
-          )}
-        </div>
-      </div>
-
-      <div className="flex justify-center">
-        <button
-          className="bg-primary text-white px-6 py-2 rounded-full hover:bg-opacity-80 transition-all"
-          onClick={isEdit ? handleSave : () => setIsEdit(true)}
-        >
-          {isEdit ? "Save Information" : "Edit Profile"}
-        </button>
       </div>
     </div>
   );

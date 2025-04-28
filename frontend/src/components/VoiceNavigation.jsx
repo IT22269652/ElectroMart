@@ -1,49 +1,103 @@
+// src/components/VoiceNavigation.jsx
 import React from "react";
 import SpeechRecognition, {
   useSpeechRecognition,
 } from "react-speech-recognition";
 import { useNavigate } from "react-router-dom";
 
-const VoiceNavigation = () => {
+const VoiceNavigation = ({
+  categories = [],
+  selectedCategories = [],
+  setSelectedCategories = () => {},
+  onVoiceCommand = () => {},
+}) => {
   const navigate = useNavigate();
   const { transcript, listening, resetTranscript } = useSpeechRecognition();
 
-  // Process voice commands
-  React.useEffect(() => {
-    if (!listening && transcript) {
-      const lowerCaseTranscript = transcript.toLowerCase();
+  const processVoiceCommand = (command) => {
+    const lowerCaseCommand = command.toLowerCase();
+    let handled = false;
 
+    // Category selection commands
+    if (lowerCaseCommand.startsWith("select ")) {
+      const category = lowerCaseCommand.replace("select ", "").trim();
+      const matchedCategory = categories.find(
+        (cat) => cat.toLowerCase() === category
+      );
+      if (matchedCategory && !selectedCategories.includes(matchedCategory)) {
+        setSelectedCategories((prev) => [...prev, matchedCategory]);
+        handled = true;
+      }
+    }
+    // Category deselection commands
+    else if (lowerCaseCommand.startsWith("deselect ")) {
+      const category = lowerCaseCommand.replace("deselect ", "").trim();
+      const matchedCategory = categories.find(
+        (cat) => cat.toLowerCase() === category
+      );
+      if (matchedCategory) {
+        setSelectedCategories((prev) =>
+          prev.filter((cat) => cat !== matchedCategory)
+        );
+        handled = true;
+      }
+    }
+    // Clear filters command
+    else if (
+      lowerCaseCommand.includes("clear filter") ||
+      lowerCaseCommand.includes("reset filter")
+    ) {
+      setSelectedCategories([]);
+      handled = true;
+    }
+    // Navigation commands (retained from original)
+    else {
       if (
-        lowerCaseTranscript.includes("home") ||
-        lowerCaseTranscript.includes("main")
+        lowerCaseCommand.includes("home") ||
+        lowerCaseCommand.includes("main")
       ) {
         navigate("/");
-      } else if (lowerCaseTranscript.includes("about")) {
+        handled = true;
+      } else if (lowerCaseCommand.includes("about")) {
         navigate("/about");
-      } else if (lowerCaseTranscript.includes("contact")) {
+        handled = true;
+      } else if (lowerCaseCommand.includes("contact")) {
         navigate("/contact");
-      } else if (lowerCaseTranscript.includes("feedback")) {
+        handled = true;
+      } else if (lowerCaseCommand.includes("feedback")) {
         navigate("/feedback");
+        handled = true;
       } else if (
-        lowerCaseTranscript.includes("profile") ||
-        lowerCaseTranscript.includes("my profile")
+        lowerCaseCommand.includes("profile") ||
+        lowerCaseCommand.includes("my profile")
       ) {
         navigate("/my-profile");
+        handled = true;
       } else if (
-        lowerCaseTranscript.includes("orders") ||
-        lowerCaseTranscript.includes("my orders")
+        lowerCaseCommand.includes("orders") ||
+        lowerCaseCommand.includes("my orders")
       ) {
         navigate("/my-orders");
+        handled = true;
       } else if (
-        lowerCaseTranscript.includes("login") ||
-        lowerCaseTranscript.includes("sign in")
+        lowerCaseCommand.includes("login") ||
+        lowerCaseCommand.includes("sign in")
       ) {
         navigate("/login");
+        handled = true;
       }
+    }
 
+    return handled;
+  };
+
+  React.useEffect(() => {
+    if (!listening && transcript) {
+      const handled = processVoiceCommand(transcript);
+      onVoiceCommand(transcript, handled);
       resetTranscript();
     }
-  }, [transcript, listening, navigate, resetTranscript]);
+  }, [transcript, listening, resetTranscript, onVoiceCommand]);
 
   if (!SpeechRecognition.browserSupportsSpeechRecognition()) {
     return null;

@@ -38,7 +38,8 @@ const Feedback = () => {
           error = "Contact number should contain only digits";
         } else if (value.length !== 10) {
           // Changed to exact 10 digits
-          error = "Contact number must be exactly 10 digits";
+          error =
+            "Contact number must be exactly 10 digits and start only digit '0'";
         }
         break;
       case "description":
@@ -116,7 +117,7 @@ const Feedback = () => {
 
       if (response.ok) {
         alert("🎉 Feedback submitted successfully!");
-        navigate("/feedbackdetails");
+        navigate("/");
         setName("");
         setEmail("");
         setContactNo("");
