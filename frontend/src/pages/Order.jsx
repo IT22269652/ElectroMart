@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useLocation, Link } from 'react-router-dom';
+import React, { useState } from "react";
+import { useLocation, Link } from "react-router-dom";
 
 const Order = () => {
   const location = useLocation();
@@ -9,13 +9,15 @@ const Order = () => {
   const [orders, setOrders] = useState(
     cartItems.map((item) => ({
       ...item,
-      status: 'Pending', // Default status is "Pending"
+      status: "Pending", // Default status is "Pending"
     }))
   );
 
   // Calculate total price
   const calculateTotal = () => {
-    return orders.reduce((total, item) => total + item.price * item.quantity, 0).toFixed(2);
+    return orders
+      .reduce((total, item) => total + item.price * item.quantity, 0)
+      .toFixed(2);
   };
 
   // Handle order cancellation
@@ -28,7 +30,9 @@ const Order = () => {
   return (
     <div className="min-h-screen bg-gray-100 py-8">
       <div className="container mx-auto px-4">
-        <h1 className="text-3xl font-bold mb-8 text-center">Order Confirmation</h1>
+        <h1 className="text-3xl font-bold mb-8 text-center">
+          Order Confirmation
+        </h1>
 
         {orders.length === 0 ? (
           <div className="text-center py-10">
@@ -69,13 +73,15 @@ const Order = () => {
                       <td className="p-4">{item.name}</td>
                       <td className="p-4">${item.price.toFixed(2)}</td>
                       <td className="p-4">{item.quantity}</td>
-                      <td className="p-4">${(item.price * item.quantity).toFixed(2)}</td>
+                      <td className="p-4">
+                        ${(item.price * item.quantity).toFixed(2)}
+                      </td>
                       <td className="p-4">
                         <span
                           className={`px-2 py-1 rounded ${
-                            item.status === 'Pending'
-                              ? 'bg-yellow-200 text-yellow-800'
-                              : 'bg-green-200 text-green-800'
+                            item.status === "Pending"
+                              ? "bg-yellow-200 text-yellow-800"
+                              : "bg-green-200 text-green-800"
                           }`}
                         >
                           {item.status}
@@ -84,11 +90,11 @@ const Order = () => {
                       <td className="p-4">
                         <button
                           onClick={() => handleCancelOrder(item.id)}
-                          disabled={item.status === 'Approved'}
+                          disabled={item.status === "Approved"}
                           className={`px-3 py-1 rounded ${
-                            item.status === 'Approved'
-                              ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                              : 'bg-red-600 text-white hover:bg-red-700'
+                            item.status === "Approved"
+                              ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                              : "bg-red-600 text-white hover:bg-red-700"
                           }`}
                         >
                           Delete
@@ -103,7 +109,9 @@ const Order = () => {
             {/* Total Price */}
             <div className="mt-6 flex justify-end">
               <div className="text-right">
-                <p className="text-xl font-semibold">Total: ${calculateTotal()}</p>
+                <p className="text-xl font-semibold">
+                  Total: ${calculateTotal()}
+                </p>
               </div>
             </div>
 

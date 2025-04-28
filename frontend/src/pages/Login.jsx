@@ -49,7 +49,8 @@ const Login = () => {
           else if (!/^\d+$/.test(value))
             error = "Contact number should contain only digits";
           else if (value.length !== 10)
-            error = "Contact number must be 10 digits";
+            error =
+              "Contact number must be 10 digits and start only digit '0' ";
         }
         break;
       case "address":

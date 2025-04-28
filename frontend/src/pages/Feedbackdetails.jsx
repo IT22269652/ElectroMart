@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import jsPDF from "jspdf";
-import "jspdf-autotable";
+import autoTable from "jspdf-autotable"; // Changed import syntax
 
 const Feedbackdetails = () => {
   const navigate = useNavigate();
@@ -19,7 +19,7 @@ const Feedbackdetails = () => {
       const response = await fetch("http://localhost:5000/api/feedback/all");
       const data = await response.json();
       setFeedbacks(data);
-      setFilteredFeedbacks(data); // Initialize filtered feedbacks with all data
+      setFilteredFeedbacks(data);
     } catch (error) {
       console.error("Error fetching feedbacks:", error);
     }
@@ -67,41 +67,59 @@ const Feedbackdetails = () => {
 
   // Generate PDF Report
   const generateReport = () => {
-    const doc = new jsPDF();
+    try {
+      const doc = new jsPDF();
 
-    // Add a title to the PDF
-    doc.setFontSize(18);
-    doc.text("Feedback Report", 14, 22);
+      // Add title
+      doc.setFontSize(18);
+      doc.text("Feedback Report", 14, 20);
 
-    // Define columns for the table
-    const columns = ["Name", "Email", "Contact No", "Description"];
+      // Define table columns
+      const columns = [
+        { header: "Name", dataKey: "name" },
+        { header: "Email", dataKey: "email" },
+        { header: "Contact No", dataKey: "contactNo" },
+        { header: "Description", dataKey: "description" },
+      ];
 
-    // Map feedback data to rows
-    const rows = filteredFeedbacks.map((fb) => [
-      fb.name,
-      fb.email,
-      fb.contactNo,
-      fb.description,
-    ]);
+      // Prepare data
+      const data = filteredFeedbacks.map((fb) => ({
+        name: fb.name,
+        email: fb.email,
+        contactNo: fb.contactNo,
+        description: fb.description,
+      }));
 
-    // Add the table to the PDF
-    doc.autoTable({
-      head: [columns],
-      body: rows,
-      startY: 30, // Start below the title
-      theme: "striped", // Use a striped theme for the table
-      styles: {
-        fontSize: 10, // Font size for the table
-        cellPadding: 3, // Padding for cells
-      },
-      headStyles: {
-        fillColor: [41, 128, 185], // Header background color
-        textColor: [255, 255, 255], // Header text color
-      },
-    });
+      // Generate table
+      autoTable(doc, {
+        columns: columns,
+        body: data,
+        startY: 30,
+        theme: "striped",
+        headStyles: {
+          fillColor: [41, 128, 185],
+          textColor: [255, 255, 255],
+          fontSize: 12,
+        },
+        bodyStyles: {
+          fontSize: 10,
+          cellPadding: 3,
+        },
+        styles: {
+          overflow: "linebreak",
+          cellWidth: "wrap",
+        },
+        columnStyles: {
+          description: { cellWidth: 80 }, // Adjust width for description column
+        },
+      });
 
-    // Save the PDF
-    doc.save("feedback_report.pdf");
+      // Save the PDF
+      doc.save("feedback_report.pdf");
+    } catch (error) {
+      console.error("Error generating PDF:", error);
+      alert("Failed to generate PDF report. Please try again.");
+    }
   };
 
   return (

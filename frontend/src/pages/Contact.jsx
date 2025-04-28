@@ -35,9 +35,9 @@ const Contact = () => {
             <div>
               <h3 className="text-xl font-medium text-gray-700">Our Office</h3>
               <p className="text-gray-600 mt-1">
-                00000 Willms Station
+                Kollupitiya,Colombo
                 <br />
-                Suite 000, Washington, USA
+                Sri Lanka
               </p>
             </div>
 
@@ -47,10 +47,12 @@ const Contact = () => {
                 Get in Touch
               </h3>
               <p className="text-gray-600 mt-1">
-                📞 <span className="text-indigo-600">(000) 000-0000</span>
+                📞 <span className="text-indigo-600">041 458 7634</span>
                 <br />
                 📧{" "}
-                <span className="text-indigo-600">greatstackdev@gmail.com</span>
+                <span className="text-indigo-600">
+                  ElectroMartdev@gmail.com
+                </span>
               </p>
             </div>
 

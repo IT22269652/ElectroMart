@@ -3,15 +3,15 @@ import { AuthContext } from "../components/AuthContext";
 import { useNavigate } from "react-router-dom";
 // Import icons from react-icons
 import { FaUser, FaEdit, FaSignOutAlt } from "react-icons/fa";
-
-// Placeholder image for the profile picture (you can replace this with an actual image URL or user-uploaded image)
-const defaultProfileImage = "https://via.placeholder.com/150"; // Replace with a scenic image URL if needed
+// Import the upload area image from assets
+import uploadAreaImage from "../assets/upload_area.png"; // Adjust the path based on your project structure
 
 const MyProfile = () => {
   const { token, logout } = useContext(AuthContext);
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [profileImage, setProfileImage] = useState(null); // State for the uploaded image preview
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -33,6 +33,7 @@ const MyProfile = () => {
         const result = await response.json();
         if (result.success) {
           setUserData(result.user);
+          setProfileImage(result.user.profileImage || null); // Set initial profile image if available
         } else {
           setError(result.message);
           if (
@@ -54,6 +55,39 @@ const MyProfile = () => {
     fetchUserData();
   }, [token, navigate, logout]);
 
+  // Handle file upload
+  const handleImageUpload = async (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const formData = new FormData();
+      formData.append("profileImage", file);
+
+      try {
+        const response = await fetch(
+          "http://localhost:5000/api/user/profile/image",
+          {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+            body: formData,
+          }
+        );
+
+        const result = await response.json();
+        if (result.success) {
+          setProfileImage(URL.createObjectURL(file)); // Preview the uploaded image
+          setUserData({ ...userData, profileImage: result.imageUrl }); // Update userData with new image URL
+        } else {
+          setError("Failed to upload image");
+        }
+      } catch (err) {
+        setError("Error uploading image");
+        console.error(err);
+      }
+    }
+  };
+
   if (loading) return <div className="text-center py-10">Loading...</div>;
   if (error)
     return <div className="text-center py-10 text-red-500">{error}</div>;
@@ -73,7 +107,7 @@ const MyProfile = () => {
             <span className="text-gray-700 font-medium">Personal Details</span>
           </div>
           <button
-            onClick={() => navigate("/edit-profile")} // Assuming you have an edit profile route
+            onClick={() => navigate("/edit-profile")}
             className="flex items-center space-x-1 text-blue-600 hover:underline"
           >
             <FaEdit className="text-blue-600" />
@@ -81,12 +115,21 @@ const MyProfile = () => {
           </button>
         </div>
 
-        {/* Profile Picture */}
-        <div className="flex justify-center my-6">
-          <img
-            src={userData?.profileImage || defaultProfileImage}
-            alt="Profile"
-            className="w-32 h-32 rounded-full object-cover"
+        {/* Profile Picture with Upload */}
+        <div className="flex justify-center my-6 relative">
+          <div className="w-32 h-32 rounded-full overflow-hidden">
+            <img
+              src={profileImage || uploadAreaImage} // Use uploaded image or upload_area.png
+              alt="Profile"
+              className="w-full h-full object-cover"
+            />
+          </div>
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handleImageUpload}
+            className="absolute inset-0 opacity-0 cursor-pointer"
+            title="Click to upload a new profile picture"
           />
         </div>
 
@@ -178,11 +221,6 @@ const MyProfile = () => {
             <FaSignOutAlt />
             <span>Logout</span>
           </button>
-        </div>
-
-        {/* Last Updated */}
-        <div className="text-center text-gray-500 text-sm mt-4">
-          Last updated : 3/28/2025
         </div>
       </div>
     </div>

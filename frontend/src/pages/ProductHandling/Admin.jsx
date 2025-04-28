@@ -8,6 +8,18 @@ const Admin = () => {
     navigate("/admin-dashboard");
   };
 
+  const handlePaymentManagementClick = () => {
+    navigate("/payment-management");
+  };
+
+  const handleDeliveryManagementClick = () => {
+    navigate("/delivery-management");
+  };
+
+  const handleCustomerManagementClick = () => {
+    navigate("/my-profile");
+  };
+
   const handleFeedbackManagementClick = () => {
     navigate("/feedbackdetails");
   };
@@ -56,7 +68,10 @@ const Admin = () => {
           </div>
 
           {/* Customer Management Card */}
-          <div className="bg-white shadow-lg rounded-lg p-6 flex flex-col items-center justify-between hover:shadow-xl transition-shadow">
+          <div
+            className="bg-white shadow-lg rounded-lg p-6 flex flex-col items-center justify-between hover:shadow-xl transition-shadow"
+            onClick={handleCustomerManagementClick}
+          >
             <h2 className="text-xl font-semibold text-gray-700 mb-2">
               Customer Management
             </h2>
@@ -86,7 +101,10 @@ const Admin = () => {
           </div>
 
           {/* Payment Management Card */}
-          <div className="bg-white shadow-lg rounded-lg p-6 flex flex-col items-center justify-between hover:shadow-xl transition-shadow">
+          <div
+            className="bg-white shadow-lg rounded-lg p-6 flex flex-col items-center justify-between hover:shadow-xl transition-shadow"
+            onClick={handlePaymentManagementClick}
+          >
             <h2 className="text-xl font-semibold text-gray-700 mb-2">
               Payment Management
             </h2>
@@ -94,13 +112,16 @@ const Admin = () => {
               Track product sales, process refunds, and review payment analytics
               for your store.
             </p>
-            <button className="bg-cyan-500 text-white px-4 py-2 rounded hover:bg-cyan-600 transition-colors">
+            <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors">
               Payment Gateway
             </button>
           </div>
 
           {/* Delivery Management Card */}
-          <div className="bg-white shadow-lg rounded-lg p-6 flex flex-col items-center justify-between hover:shadow-xl transition-shadow">
+          <div
+            className="bg-white shadow-lg rounded-lg p-6 flex flex-col items-center justify-between hover:shadow-xl transition-shadow"
+            onClick={handleDeliveryManagementClick}
+          >
             <h2 className="text-xl font-semibold text-gray-700 mb-2">
               Delivery Management
             </h2>
@@ -108,7 +129,7 @@ const Admin = () => {
               Track product shipments, manage delivery partners, and monitor
               delivery statuses.
             </p>
-            <button className="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600 transition-colors">
+            <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors">
               Manage Deliveries
             </button>
           </div>
