@@ -84,12 +84,10 @@ const registerUser = async (req, res) => {
 
     // Validate contact number
     if (!validator.isMobilePhone(contactNo, "any", { strictMode: false })) {
-      return res
-        .status(400)
-        .json({
-          success: false,
-          message: "Please enter a valid contact number",
-        });
+      return res.status(400).json({
+        success: false,
+        message: "Please enter a valid contact number",
+      });
     }
 
     // Validate gender
@@ -107,12 +105,10 @@ const registerUser = async (req, res) => {
 
     // Validate birthday
     if (!validator.isDate(birthday)) {
-      return res
-        .status(400)
-        .json({
-          success: false,
-          message: "Please enter a valid birthday (YYYY-MM-DD)",
-        });
+      return res.status(400).json({
+        success: false,
+        message: "Please enter a valid birthday (YYYY-MM-DD)",
+      });
     }
 
     // Hash the password

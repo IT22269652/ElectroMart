@@ -18,12 +18,7 @@ const ProductDetails = () => {
         "Assured Cashback upto $50 on paying with Credit Cards.",
         "Flat 10% Instant Discount Up to $100 with HDFC Credit Card.",
       ],
-      images: [
-        assets.LGTV01,
-        assets.LGTV011,
-        assets.LGTV012,
-        assets.LGTV013,
-      ],
+      images: [assets.LGTV01, assets.LGTV011, assets.LGTV012, assets.LGTV013],
     },
 
     {
@@ -37,12 +32,7 @@ const ProductDetails = () => {
         "Assured Cashback upto $50 on paying with Credit Cards.",
         "Flat 10% Instant Discount Up to $100 with HDFC Credit Card.",
       ],
-      images: [
-        assets.LGTV02,
-        assets.LGTV021,
-        assets.LGTV022,
-        assets.LGTV023,
-      ],
+      images: [assets.LGTV02, assets.LGTV021, assets.LGTV022, assets.LGTV023],
     },
 
     {
@@ -57,10 +47,10 @@ const ProductDetails = () => {
         "Flat 10% Instant Discount Up to $100 with HDFC Credit Card.",
       ],
       images: [
-          assets.SamsungTV01,
-          assets.SamsungTV011,
-          assets.SamsungTV01,
-          assets.SamsungTV012,
+        assets.SamsungTV01,
+        assets.SamsungTV011,
+        assets.SamsungTV01,
+        assets.SamsungTV012,
       ],
     },
 
@@ -76,10 +66,10 @@ const ProductDetails = () => {
         "Flat 10% Instant Discount Up to $100 with HDFC Credit Card.",
       ],
       images: [
-          assets.SonyTV01,
-          assets.SonyTV011,
-          assets.SonyTV012,
-          assets.SonyTV013,
+        assets.SonyTV01,
+        assets.SonyTV011,
+        assets.SonyTV012,
+        assets.SonyTV013,
       ],
     },
 
@@ -95,10 +85,10 @@ const ProductDetails = () => {
         "Flat 10% Instant Discount Up to $100 with HDFC Credit Card.",
       ],
       images: [
-          assets.camera01,
-          assets.camera02,
-          assets.camera03,
-          assets.camera04,
+        assets.camera01,
+        assets.camera02,
+        assets.camera03,
+        assets.camera04,
       ],
     },
 
@@ -114,10 +104,10 @@ const ProductDetails = () => {
         "Flat 10% Instant Discount Up to $100 with HDFC Credit Card.",
       ],
       images: [
-          assets.camera02,
-          assets.camera021,
-          assets.camera021,
-          assets.camera031,
+        assets.camera02,
+        assets.camera021,
+        assets.camera021,
+        assets.camera031,
       ],
     },
 
@@ -133,10 +123,10 @@ const ProductDetails = () => {
         "Flat 10% Instant Discount Up to $100 with HDFC Credit Card.",
       ],
       images: [
-          assets.camera03,
-          assets.camera031,
-          assets.camera032,
-          assets.camera01,
+        assets.camera03,
+        assets.camera031,
+        assets.camera032,
+        assets.camera01,
       ],
     },
 
@@ -152,10 +142,10 @@ const ProductDetails = () => {
         "Flat 10% Instant Discount Up to $100 with HDFC Credit Card.",
       ],
       images: [
-          assets.camera04,
-          assets.camera041,
-          assets.camera042,
-          assets.camera043,
+        assets.camera04,
+        assets.camera041,
+        assets.camera042,
+        assets.camera043,
       ],
     },
 
@@ -171,10 +161,10 @@ const ProductDetails = () => {
         "Flat 10% Instant Discount Up to $100 with HDFC Credit Card.",
       ],
       images: [
-          assets.laptop01,
-          assets.laptop011,
-          assets.laptop012,
-          assets.laptop013,
+        assets.laptop01,
+        assets.laptop011,
+        assets.laptop012,
+        assets.laptop013,
       ],
     },
 
@@ -190,10 +180,10 @@ const ProductDetails = () => {
         "Flat 10% Instant Discount Up to $100 with HDFC Credit Card.",
       ],
       images: [
-          assets.laptop02,
-          assets.laptop021,
-          assets.laptop022,
-          assets.laptop023,
+        assets.laptop02,
+        assets.laptop021,
+        assets.laptop022,
+        assets.laptop023,
       ],
     },
 
@@ -209,10 +199,10 @@ const ProductDetails = () => {
         "Flat 10% Instant Discount Up to $100 with HDFC Credit Card.",
       ],
       images: [
-          assets.laptop03,
-          assets.laptop031,
-          assets.laptop032,
-          assets.laptop01,
+        assets.laptop03,
+        assets.laptop031,
+        assets.laptop032,
+        assets.laptop01,
       ],
     },
 
@@ -228,10 +218,10 @@ const ProductDetails = () => {
         "Flat 10% Instant Discount Up to $100 with HDFC Credit Card.",
       ],
       images: [
-          assets.laptop04,
-          assets.laptop041,
-          assets.laptop042,
-          assets.laptop043,
+        assets.laptop04,
+        assets.laptop041,
+        assets.laptop042,
+        assets.laptop043,
       ],
     },
 
@@ -247,10 +237,10 @@ const ProductDetails = () => {
         "Flat 10% Instant Discount Up to $100 with HDFC Credit Card.",
       ],
       images: [
-          assets.iphone03,
-          assets.iphone031,
-          assets.iphone033,
-          assets.iphone03,
+        assets.iphone03,
+        assets.iphone031,
+        assets.iphone033,
+        assets.iphone03,
       ],
     },
 
@@ -266,10 +256,10 @@ const ProductDetails = () => {
         "Flat 10% Instant Discount Up to $100 with HDFC Credit Card.",
       ],
       images: [
-          assets.iphone04,
-          assets.iphone041,
-          assets.iphone042,
-          assets.iphone043,
+        assets.iphone04,
+        assets.iphone041,
+        assets.iphone042,
+        assets.iphone043,
       ],
     },
 
@@ -284,12 +274,7 @@ const ProductDetails = () => {
         "Assured Cashback upto $50 on paying with Credit Cards.",
         "Flat 10% Instant Discount Up to $100 with HDFC Credit Card.",
       ],
-      images: [
-          assets.earbud1,
-          assets.earbud2,
-          assets.earbud1,
-          assets.earbud3,
-      ],
+      images: [assets.earbud1, assets.earbud2, assets.earbud1, assets.earbud3],
     },
 
     {
@@ -304,10 +289,10 @@ const ProductDetails = () => {
         "Flat 10% Instant Discount Up to $100 with HDFC Credit Card.",
       ],
       images: [
-          assets.smartwatch,
-          assets.smartwatch2,
-          assets.smartwatch3,
-          assets.smartwatch,
+        assets.smartwatch,
+        assets.smartwatch2,
+        assets.smartwatch3,
+        assets.smartwatch,
       ],
     },
 
@@ -323,10 +308,10 @@ const ProductDetails = () => {
         "Flat 10% Instant Discount Up to $100 with HDFC Credit Card.",
       ],
       images: [
-          assets.speakers2,
-          assets.speakers3,
-          assets.speakers2,
-          assets.speakers3,
+        assets.speakers2,
+        assets.speakers3,
+        assets.speakers2,
+        assets.speakers3,
       ],
     },
 
@@ -342,10 +327,10 @@ const ProductDetails = () => {
         "Flat 10% Instant Discount Up to $100 with HDFC Credit Card.",
       ],
       images: [
-          assets.externalharddrive1,
-          assets.externalharddrive2,
-          assets.externalharddrive3,
-          assets.externalharddrive1,
+        assets.externalharddrive1,
+        assets.externalharddrive2,
+        assets.externalharddrive3,
+        assets.externalharddrive1,
       ],
     },
 
@@ -360,12 +345,7 @@ const ProductDetails = () => {
         "Assured Cashback upto $50 on paying with Credit Cards.",
         "Flat 10% Instant Discount Up to $100 with HDFC Credit Card.",
       ],
-      images: [
-          assets.drone2,
-          assets.drone1,
-          assets.drone3,
-          assets.drone1,
-      ],
+      images: [assets.drone2, assets.drone1, assets.drone3, assets.drone1],
     },
 
     {
@@ -380,10 +360,10 @@ const ProductDetails = () => {
         "Flat 10% Instant Discount Up to $100 with HDFC Credit Card.",
       ],
       images: [
-          assets.VRheadset1,
-          assets.VRheadset2,
-          assets.VRheadset3,
-          assets.VRheadset1,
+        assets.VRheadset1,
+        assets.VRheadset2,
+        assets.VRheadset3,
+        assets.VRheadset1,
       ],
     },
 
@@ -399,10 +379,10 @@ const ProductDetails = () => {
         "Flat 10% Instant Discount Up to $100 with HDFC Credit Card.",
       ],
       images: [
-          assets.projector1,
-          assets.projector2,
-          assets.projector3,
-          assets.projector1,
+        assets.projector1,
+        assets.projector2,
+        assets.projector3,
+        assets.projector1,
       ],
     },
 
@@ -418,10 +398,10 @@ const ProductDetails = () => {
         "Flat 10% Instant Discount Up to $100 with HDFC Credit Card.",
       ],
       images: [
-          assets.hometheatersystem1,
-          assets.hometheatersystem2,
-          assets.hometheatersystem3,
-          assets.hometheatersystem1,
+        assets.hometheatersystem1,
+        assets.hometheatersystem2,
+        assets.hometheatersystem3,
+        assets.hometheatersystem1,
       ],
     },
 
@@ -437,10 +417,10 @@ const ProductDetails = () => {
         "Flat 10% Instant Discount Up to $100 with HDFC Credit Card.",
       ],
       images: [
-          assets.iphone02,
-          assets.iphone021,
-          assets.iphone02,
-          assets.iphone021,
+        assets.iphone02,
+        assets.iphone021,
+        assets.iphone02,
+        assets.iphone021,
       ],
     },
     // Add more products as needed
@@ -449,13 +429,19 @@ const ProductDetails = () => {
   const product = products.find((p) => p.id === productId);
 
   if (!product) {
-    return <div className="text-center text-2xl font-bold mt-10">Product not found!</div>;
+    return (
+      <div className="text-center text-2xl font-bold mt-10">
+        Product not found!
+      </div>
+    );
   }
 
   return (
     <div className="min-h-screen bg-gray-100 py-10">
       <div className="max-w-6xl mx-auto bg-white rounded-lg shadow-lg overflow-hidden p-6">
-        <h1 className="text-4xl font-bold text-gray-800 mb-6 text-center">Product Details</h1>
+        <h1 className="text-4xl font-bold text-gray-800 mb-6 text-center">
+          Product Details
+        </h1>
         <div className="flex flex-col md:flex-row gap-6">
           <div className="flex-1 flex flex-col md:flex-row gap-4">
             <div className="flex md:flex-col gap-2">
@@ -463,7 +449,9 @@ const ProductDetails = () => {
                 <div
                   key={index}
                   className={`w-24 h-24 overflow-hidden rounded-lg cursor-pointer border-2 ${
-                    selectedImage === index ? "border-blue-500" : "border-gray-200"
+                    selectedImage === index
+                      ? "border-blue-500"
+                      : "border-gray-200"
                   }`}
                   onClick={() => setSelectedImage(index)}
                 >
@@ -485,16 +473,25 @@ const ProductDetails = () => {
               </div>
             </div>
           </div>
-          
+
           <div className="flex-1">
-            <h1 className="text-3xl font-bold text-gray-800 mb-4">{product.name}</h1>
+            <h1 className="text-3xl font-bold text-gray-800 mb-4">
+              {product.name}
+            </h1>
             <div className="flex items-center gap-4 mb-4">
-              <p className="text-2xl font-semibold text-gray-800">{product.price}</p>
-              <p className="text-lg text-gray-500 line-through">{product.originalPrice}</p>
-              <p className="text-lg text-green-600 font-semibold">{product.discount}</p>
+              <p className="text-2xl font-semibold text-gray-800">
+                {product.price}
+              </p>
+              <p className="text-lg text-gray-500 line-through">
+                {product.originalPrice}
+              </p>
+              <p className="text-lg text-green-600 font-semibold">
+                {product.discount}
+              </p>
             </div>
             <p className="text-gray-700 mb-4">
-              <span className="font-semibold">Warranty:</span> {product.warranty}
+              <span className="font-semibold">Warranty:</span>{" "}
+              {product.warranty}
             </p>
             <div className="mb-6">
               <h2 className="text-xl font-bold text-gray-800 mb-2">Offers</h2>

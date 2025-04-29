@@ -8,8 +8,21 @@ const Admin = () => {
     navigate("/admin-dashboard");
   };
 
+
   const handleProfileDetailsClick = () => {
     navigate("/profile-details");
+
+  const handlePaymentManagementClick = () => {
+    navigate("/payment-management");
+  };
+
+  const handleDeliveryManagementClick = () => {
+    navigate("/delivery-management");
+  };
+
+  const handleCustomerManagementClick = () => {
+    navigate("/my-profile");
+
   };
 
   const handleFeedbackManagementClick = () => {
@@ -59,10 +72,17 @@ const Admin = () => {
             </button>
           </div>
 
+
           {/* Customer Profile Management Card */}
           <div
             className="bg-white shadow-lg rounded-lg p-6 flex flex-col items-center justify-between hover:shadow-xl transition-shadow"
             onClick={handleProfileDetailsClick}
+
+          {/* Customer Management Card */}
+          <div
+            className="bg-white shadow-lg rounded-lg p-6 flex flex-col items-center justify-between hover:shadow-xl transition-shadow"
+            onClick={handleCustomerManagementClick}
+
           >
             <h2 className="text-xl font-semibold text-gray-700 mb-2">
               Customer Profile Management
@@ -93,7 +113,10 @@ const Admin = () => {
           </div>
 
           {/* Payment Management Card */}
-          <div className="bg-white shadow-lg rounded-lg p-6 flex flex-col items-center justify-between hover:shadow-xl transition-shadow">
+          <div
+            className="bg-white shadow-lg rounded-lg p-6 flex flex-col items-center justify-between hover:shadow-xl transition-shadow"
+            onClick={handlePaymentManagementClick}
+          >
             <h2 className="text-xl font-semibold text-gray-700 mb-2">
               Payment Management
             </h2>
@@ -107,7 +130,10 @@ const Admin = () => {
           </div>
 
           {/* Delivery Management Card */}
-          <div className="bg-white shadow-lg rounded-lg p-6 flex flex-col items-center justify-between hover:shadow-xl transition-shadow">
+          <div
+            className="bg-white shadow-lg rounded-lg p-6 flex flex-col items-center justify-between hover:shadow-xl transition-shadow"
+            onClick={handleDeliveryManagementClick}
+          >
             <h2 className="text-xl font-semibold text-gray-700 mb-2">
               Delivery Management
             </h2>
