@@ -8,6 +8,10 @@ const Admin = () => {
     navigate("/admin-dashboard");
   };
 
+  const handleProfileDetailsClick = () => {
+    navigate("/profile-details");
+  };
+
   const handleFeedbackManagementClick = () => {
     navigate("/feedbackdetails");
   };
@@ -55,17 +59,20 @@ const Admin = () => {
             </button>
           </div>
 
-          {/* Customer Management Card */}
-          <div className="bg-white shadow-lg rounded-lg p-6 flex flex-col items-center justify-between hover:shadow-xl transition-shadow">
+          {/* Customer Profile Management Card */}
+          <div
+            className="bg-white shadow-lg rounded-lg p-6 flex flex-col items-center justify-between hover:shadow-xl transition-shadow"
+            onClick={handleProfileDetailsClick}
+          >
             <h2 className="text-xl font-semibold text-gray-700 mb-2">
-              Customer Management
+              Customer Profile Management
             </h2>
             <p className="text-gray-500 text-center mb-4">
               View and manage customer accounts, review reading habits, and
               handle customer inquiries.
             </p>
             <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors">
-              Manage Customers
+              Manage User Profiles
             </button>
           </div>
 
@@ -94,7 +101,7 @@ const Admin = () => {
               Track product sales, process refunds, and review payment analytics
               for your store.
             </p>
-            <button className="bg-cyan-500 text-white px-4 py-2 rounded hover:bg-cyan-600 transition-colors">
+            <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors">
               Payment Gateway
             </button>
           </div>
@@ -108,7 +115,7 @@ const Admin = () => {
               Track product shipments, manage delivery partners, and monitor
               delivery statuses.
             </p>
-            <button className="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600 transition-colors">
+            <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors">
               Manage Deliveries
             </button>
           </div>
