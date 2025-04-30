@@ -13,12 +13,22 @@ const Delivery = () => {
     streetAddress: '',
     streetAddress2: '',
     city: '',
+    customCity: '', // New field for custom city input
     postalCode: '',
     contactNumber: '',
     email: '',
   });
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
+
+  // List of cities for the dropdown
+  const cities = [
+    'Colombo', 'Gampaha', 'Kalutara', 'Kandy', 'Matale', 'Nuwara Eliya',
+    'Galle', 'Matara', 'Hambantota', 'Jaffna', 'Kilinochchi', 'Mannar',
+    'Vavuniya', 'Mullaitivu', 'Trincomalee', 'Batticaloa', 'Ampara',
+    'Kurunegala', 'Puttalam', 'Anuradhapura', 'Polonnaruwa', 'Badulla',
+    'Monaragala', 'Ratnapura', 'Kegalle', 'Other'
+  ];
 
   // Validation functions
   const validateName = (value, fieldName) => {
@@ -32,13 +42,18 @@ const Delivery = () => {
     return '';
   };
 
-  const validateCity = (value) => {
+  const validateCity = (city, customCity) => {
     const cityRegex = /^[A-Za-z\s]+$/;
-    if (!value) {
+    if (!city) {
       return 'City is required';
     }
-    if (!cityRegex.test(value)) {
-      return 'City can only contain letters and spaces';
+    if (city === 'Other') {
+      if (!customCity) {
+        return 'Please enter a city name';
+      }
+      if (!cityRegex.test(customCity)) {
+        return 'City can only contain letters and spaces';
+      }
     }
     return '';
   };
@@ -95,7 +110,10 @@ const Delivery = () => {
         error = validateName(value, 'Last name');
         break;
       case 'city':
-        error = validateCity(value);
+        error = validateCity(value, formData.customCity);
+        break;
+      case 'customCity':
+        error = validateCity(formData.city, value);
         break;
       case 'postalCode':
         error = validatePostalCode(value);
@@ -118,7 +136,7 @@ const Delivery = () => {
     newErrors.firstName = validateName(formData.firstName, 'First name');
     newErrors.lastName = validateName(formData.lastName, 'Last name');
     newErrors.streetAddress = formData.streetAddress ? '' : 'Street address is required';
-    newErrors.city = validateCity(formData.city);
+    newErrors.city = validateCity(formData.city, formData.customCity);
     newErrors.postalCode = validatePostalCode(formData.postalCode);
     newErrors.contactNumber = validateContactNumber(formData.contactNumber);
     newErrors.email = validateEmail(formData.email);
@@ -145,7 +163,7 @@ const Delivery = () => {
         lastName: formData.lastName,
         streetAddress: formData.streetAddress,
         streetAddress2: formData.streetAddress2,
-        city: formData.city,
+        city: formData.city === 'Other' ? formData.customCity : formData.city, // Use customCity if "Other" is selected
         postalCode: formData.postalCode,
         contactNumber: formData.contactNumber,
         email: formData.email,
@@ -166,7 +184,6 @@ const Delivery = () => {
       });
     } catch (error) {
       console.error('Error saving delivery details:', error);
-      // Display detailed error message from backend
       const errorMessage = error.response?.data?.message || 'An error occurred';
       const errorDetails = error.response?.data?.details || error.message;
       setErrors({ api: `${errorMessage}${errorDetails ? `: ${errorDetails}` : ''}` });
@@ -265,19 +282,42 @@ const Delivery = () => {
             />
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <input
-                  type="text"
+                <select
                   name="city"
                   value={formData.city}
                   onChange={handleChange}
-                  placeholder="City"
                   className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 ${
                     errors.city ? 'border-red-500 focus:ring-red-500' : 'focus:ring-purple-500'
                   }`}
                   disabled={loading}
-                />
+                >
+                  <option value="">Select City</option>
+                  {cities.map((city) => (
+                    <option key={city} value={city}>
+                      {city}
+                    </option>
+                  ))}
+                </select>
                 {errors.city && (
                   <p className="text-red-500 text-sm mt-1">{errors.city}</p>
+                )}
+                {formData.city === 'Other' && (
+                  <div className="mt-3">
+                    <input
+                      type="text"
+                      name="customCity"
+                      value={formData.customCity}
+                      onChange={handleChange}
+                      placeholder="Enter your city"
+                      className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 ${
+                        errors.customCity ? 'border-red-500 focus:ring-red-500' : 'focus:ring-purple-500'
+                      }`}
+                      disabled={loading}
+                    />
+                    {errors.customCity && (
+                      <p className="text-red-500 text-sm mt-1">{errors.customCity}</p>
+                    )}
+                  </div>
                 )}
               </div>
               <div>
