@@ -1,14 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import {
-  FaCheck,
-  FaSpinner,
-  FaTruck,
-  FaCheckCircle,
-  FaTrash,
-  FaSearch,
-} from "react-icons/fa";
 
 const PaymentManagement = () => {
   const navigate = useNavigate();
@@ -30,16 +22,11 @@ const PaymentManagement = () => {
     const fetchPayments = async () => {
       try {
         const response = await axios.get("http://localhost:5000/api/payment");
-        // Initialize each payment with an action state
-        const paymentsWithAction = response.data.map((payment) => ({
-          ...payment,
-          actionState: "Confirm", // Initial state
-        }));
-        setPayments(paymentsWithAction);
-        setFilteredPayments(paymentsWithAction);
+        setPayments(response.data);
+        setFilteredPayments(response.data);
         setLoading(false);
       } catch (err) {
-        setError("Failed to fetch payment records");
+        setError("Failed to fetch payment records: " + (err.response?.data?.message || err.message));
         setLoading(false);
         console.error(err);
       }
@@ -67,57 +54,59 @@ const PaymentManagement = () => {
     }
   }, [searchTerm, payments]);
 
-  const handleActionClick = (transactionId) => {
-    setPayments((prevPayments) =>
-      prevPayments.map((payment) => {
-        if (payment.transactionId === transactionId) {
-          if (payment.actionState === "Confirm") {
-            return { ...payment, actionState: "Processing" };
-          } else if (payment.actionState === "Processing") {
-            return { ...payment, actionState: "Delivery" };
-          } else if (payment.actionState === "Delivery") {
-            return { ...payment, actionState: "Done" };
-          }
-          return payment;
-        }
-        return payment;
-      })
-    );
+  const handleActionClick = async (paymentId) => {
+    try {
+      const payment = payments.find(p => p._id === paymentId);
+      if (!payment) return;
 
-    // Also update filtered payments to reflect the change immediately
-    setFilteredPayments((prevPayments) =>
-      prevPayments.map((payment) => {
-        if (payment.transactionId === transactionId) {
-          if (payment.actionState === "Confirm") {
-            return { ...payment, actionState: "Processing" };
-          } else if (payment.actionState === "Processing") {
-            return { ...payment, actionState: "Delivery" };
-          } else if (payment.actionState === "Delivery") {
-            return { ...payment, actionState: "Done" };
-          }
-          return payment;
-        }
-        return payment;
-      })
-    );
+      // Update the order status to "Processing"
+      const orderResponse = await axios.get(`http://localhost:5000/api/order/user/${payment.userId}`);
+      const order = orderResponse.data.find(o => o.paymentId === paymentId);
+      if (order) {
+        await axios.put(`http://localhost:5000/api/order/${order._id}/status`, {
+          newStatus: "Processing",
+        });
+      }
+    } catch (err) {
+      setError("Failed to confirm payment: " + (err.response?.data?.message || err.message));
+      console.error(err);
+    }
   };
 
-  const handleDeletePayment = (transactionId) => {
-    if (
-      window.confirm("Are you sure you want to delete this payment record?")
-    ) {
+  const handleDeletePayment = async (paymentId) => {
+    if (!window.confirm("Are you sure you want to delete this payment record?")) {
+      return;
+    }
+
+    try {
+      // Find the payment to get its ID and associated order
+      const payment = payments.find(p => p._id === paymentId);
+      if (!payment) {
+        throw new Error("Payment not found");
+      }
+
+      // Delete the payment from the backend
+      await axios.delete(`http://localhost:5000/api/payment/${paymentId}`);
+
+      // Find and update the associated order by removing the paymentId
+      const orderResponse = await axios.get(`http://localhost:5000/api/order/user/${payment.userId}`);
+      const order = orderResponse.data.find(o => o.paymentId === paymentId);
+      if (order) {
+        await axios.put(`http://localhost:5000/api/order/${order._id}`, {
+          paymentId: null,
+        });
+      }
+
+      // Update UI by removing the payment
       setPayments((prevPayments) =>
-        prevPayments.filter(
-          (payment) => payment.transactionId !== transactionId
-        )
+        prevPayments.filter((payment) => payment._id !== paymentId)
       );
       setFilteredPayments((prevPayments) =>
-        prevPayments.filter(
-          (payment) => payment.transactionId !== transactionId
-        )
+        prevPayments.filter((payment) => payment._id !== paymentId)
       );
-      console.log(`Deleted payment with Transaction ID: ${transactionId}`);
-      // In a real app, add an API call here to delete from the backend
+    } catch (err) {
+      setError("Failed to delete payment: " + (err.response?.data?.message || err.message));
+      console.error(err);
     }
   };
 
@@ -148,16 +137,20 @@ const PaymentManagement = () => {
           Payment Management
         </h1>
 
+        {/* Error Message */}
+        {error && (
+          <div className="mb-4 p-3 bg-red-100 text-red-700 rounded-lg text-center">
+            {error}
+          </div>
+        )}
+
         {/* Search Bar */}
         <div className="mb-6 max-w-2xl mx-auto">
           <div className="relative">
-            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <FaSearch className="text-gray-400" />
-            </div>
             <input
               type="text"
               placeholder="Search by User ID, Order ID, Transaction ID, Status or Amount..."
-              className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+              className="block w-full px-4 py-3 border border-gray-300 rounded-lg bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
@@ -209,7 +202,7 @@ const PaymentManagement = () => {
                 <tbody>
                   {filteredPayments.map((payment) => (
                     <tr
-                      key={payment.transactionId}
+                      key={payment._id}
                       className="border-b last:border-b-0"
                     >
                       <td className="p-4">{payment.userId}</td>
@@ -232,37 +225,15 @@ const PaymentManagement = () => {
                       <td className="p-4">
                         <div className="flex space-x-2">
                           <button
-                            onClick={() =>
-                              handleActionClick(payment.transactionId)
-                            }
-                            className={`px-3 py-1 rounded text-white flex items-center justify-center space-x-2 ${
-                              payment.actionState === "Confirm"
-                                ? "bg-blue-600 hover:bg-blue-700"
-                                : payment.actionState === "Processing"
-                                ? "bg-yellow-600 hover:bg-yellow-700"
-                                : payment.actionState === "Delivery"
-                                ? "bg-green-600 hover:bg-green-700"
-                                : "bg-gray-600 hover:bg-gray-700"
-                            }`}
-                            disabled={payment.actionState === "Done"}
+                            onClick={() => handleActionClick(payment._id)}
+                            className="px-3 py-1 rounded bg-blue-600 text-white hover:bg-blue-700 flex items-center justify-center space-x-2"
                           >
-                            {payment.actionState === "Confirm" && <FaCheck />}
-                            {payment.actionState === "Processing" && (
-                              <FaSpinner className="animate-spin" />
-                            )}
-                            {payment.actionState === "Delivery" && <FaTruck />}
-                            {payment.actionState === "Done" && (
-                              <FaCheckCircle />
-                            )}
-                            <span>{payment.actionState}</span>
+                            <span>Confirm</span>
                           </button>
                           <button
-                            onClick={() =>
-                              handleDeletePayment(payment.transactionId)
-                            }
+                            onClick={() => handleDeletePayment(payment._id)}
                             className="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700 flex items-center justify-center space-x-2"
                           >
-                            <FaTrash />
                             <span>Delete</span>
                           </button>
                         </div>
