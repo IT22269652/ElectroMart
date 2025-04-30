@@ -13,7 +13,7 @@ const Delivery = () => {
     streetAddress: '',
     streetAddress2: '',
     city: '',
-    customCity: '', // New field for custom city input
+    customCity: '',
     postalCode: '',
     contactNumber: '',
     email: '',
@@ -29,6 +29,36 @@ const Delivery = () => {
     'Kurunegala', 'Puttalam', 'Anuradhapura', 'Polonnaruwa', 'Badulla',
     'Monaragala', 'Ratnapura', 'Kegalle', 'Other'
   ];
+
+  // Mapping of cities to postal codes
+  const cityPostalCodes = {
+    'Colombo': '11485',
+    'Gampaha': '11789',
+    'Kalutara': '11456',
+    'Kandy': '11123',
+    'Matale': '11369',
+    'Nuwara Eliya': '11258',
+    'Galle': '11741',
+    'Matara': '11596',
+    'Hambantota': '11785',
+    'Jaffna': '11365',
+    'Kilinochchi': '11753',
+    'Mannar': '11578',
+    'Vavuniya': '11984',
+    'Mullaitivu': '11785',
+    'Trincomalee': '12447',
+    'Batticaloa': '11954',
+    'Ampara': '14458',
+    'Kurunegala': '11856',
+    'Puttalam': '11487',
+    'Anuradhapura': '11856',
+    'Polonnaruwa': '11586',
+    'Badulla': '11478',
+    'Monaragala': '11365',
+    'Ratnapura': '41158',
+    'Kegalle': '11785',
+    'Other': '' // No predefined postal code for "Other"
+  };
 
   // Validation functions
   const validateName = (value, fieldName) => {
@@ -99,7 +129,15 @@ const Delivery = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    let updatedFormData = { ...formData, [name]: value };
+
+    // If the city changes, auto-fill the postal code
+    if (name === 'city') {
+      const postalCode = cityPostalCodes[value] || '';
+      updatedFormData = { ...updatedFormData, postalCode };
+    }
+
+    setFormData(updatedFormData);
 
     let error = '';
     switch (name) {
@@ -156,14 +194,14 @@ const Delivery = () => {
     }
 
     try {
-      const userId = '12345'; // This now works since userId is a String in the schema
+      const userId = '12345';
       const deliveryData = {
         userId,
         firstName: formData.firstName,
         lastName: formData.lastName,
         streetAddress: formData.streetAddress,
         streetAddress2: formData.streetAddress2,
-        city: formData.city === 'Other' ? formData.customCity : formData.city, // Use customCity if "Other" is selected
+        city: formData.city === 'Other' ? formData.customCity : formData.city,
         postalCode: formData.postalCode,
         contactNumber: formData.contactNumber,
         email: formData.email,
@@ -172,10 +210,8 @@ const Delivery = () => {
       const response = await axios.post('http://localhost:5000/api/delivery', deliveryData);
       console.log('Delivery details saved:', response.data);
 
-      // Show success message
       alert('Successful!! Your delivery details have been saved.');
 
-      // Navigate to payment page with cartItems and deliveryDetails
       navigate('/payment', {
         state: {
           cartItems,
@@ -194,7 +230,6 @@ const Delivery = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center py-8 relative">
-      {/* Slideshow Background */}
       <div className="slideshow absolute inset-0 z-0">
         <div className="slideshow-image slide1"></div>
         <div className="slideshow-image slide2"></div>
@@ -202,9 +237,7 @@ const Delivery = () => {
         <div className="slideshow-image slide4"></div>
         <div className="slideshow-image slide5"></div>
       </div>
-      {/* Overlay to ensure form readability */}
       <div className="absolute inset-0 bg-black opacity-50 z-10"></div>
-      {/* Form Container */}
       <div className="relative bg-white bg-opacity-90 rounded-lg shadow-2xl p-8 w-full max-w-lg transform transition-all duration-300 hover:shadow-3xl z-20">
         <h1 className="text-3xl font-bold mb-6 text-center text-gray-800">Delivery Details</h1>
 
@@ -331,7 +364,7 @@ const Delivery = () => {
                     errors.postalCode ? 'border-red-500 focus:ring-red-500' : 'focus:ring-purple-500'
                   }`}
                   maxLength="5"
-                  disabled={loading}
+                  disabled={loading || formData.city !== 'Other'} // Disable unless "Other" is selected
                 />
                 {errors.postalCode && (
                   <p className="text-red-500 text-sm mt-1">{errors.postalCode}</p>
@@ -391,7 +424,6 @@ const Delivery = () => {
         </form>
       </div>
 
-      {/* Updated CSS for Slideshow */}
       <style>{`
         .slideshow {
           position: absolute;
@@ -417,27 +449,27 @@ const Delivery = () => {
         }
 
         .slideshow-image.slide1 {
-          background-image: url('https://images.unsplash.com/photo-1633185039987-1b7e5f7b7f7f'); /* Circuit board */
+          background-image: url('https://images.unsplash.com/photo-1633185039987-1b7e5f7b7f7f');
           animation-delay: 0s;
         }
 
         .slideshow-image.slide2 {
-          background-image: url('https://images.unsplash.com/photo-1516321318423-f06f85e504b3'); /* Laptop on desk */
+          background-image: url('https://images.unsplash.com/photo-1516321318423-f06f85e504b3');
           animation-delay: 5s;
         }
 
         .slideshow-image.slide3 {
-          background-image: url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c'); /* LED lights */
+          background-image: url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c');
           animation-delay: 10s;
         }
 
         .slideshow-image.slide4 {
-          background-image: url('https://images.unsplash.com/photo-1581091226825-a6a2a5aee158'); /* Robotic arm */
+          background-image: url('https://images.unsplash.com/photo-1581091226825-a6a2a5aee158');
           animation-delay: 15s;
         }
 
         .slideshow-image.slide5 {
-          background-image: url('https://images.unsplash.com/photo-1550751827-4bd374c3f58b'); /* Digital screen with code */
+          background-image: url('https://images.unsplash.com/photo-1550751827-4bd374c3f58b');
           animation-delay: 20s;
         }
 
