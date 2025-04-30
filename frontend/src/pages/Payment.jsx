@@ -163,7 +163,7 @@ const Payment = () => {
       const confirmNavigation = window.confirm('Payment Successful! Click OK to view your order.');
       if (confirmNavigation) {
         setFormData({ nameOnCard: '', cardNumber: '', expiryDate: '', cvc: '' });
-        navigate('/order', {
+        navigate('/Order', {
           state: { cartItems, deliveryDetails, paymentDetails: paymentResponse.data },
         });
       }
