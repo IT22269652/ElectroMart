@@ -7,9 +7,15 @@ import VoiceNavigation from "./VoiceNavigation";
 const Navbar = () => {
   const navigate = useNavigate();
   const [showMenu, setShowMenu] = useState(false);
-  const { isLoggedIn, logout } = useContext(AuthContext);
+  const { isLoggedIn, userProfileImage, logout } = useContext(AuthContext);
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
+
+  // Check if the user is an admin
+  const isAdmin = localStorage.getItem("isAdmin") === "true";
+  if (isAdmin) {
+    return null; // Hide the navbar if the user is an admin
+  }
 
   const searchData = [
     { id: 1, title: "Home", path: "/", category: "Main", icon: "🏠" },
@@ -20,7 +26,7 @@ const Navbar = () => {
       category: "Support",
       icon: "📝",
     },
-    { id: 3, title: "About Us", path: "/about", category: "Info", icon: "ℹ️" },
+    { id: 3, title: "About Us", path: "/about", category: "Info", icon: "ℹ" },
     {
       id: 4,
       title: "Contact",
@@ -47,20 +53,15 @@ const Navbar = () => {
   const handleSearch = (e) => {
     const query = e.target.value;
     setSearchQuery(query);
-
     if (query.trim() === "") {
       setSearchResults([]);
       return;
     }
-
-    const results = searchData.filter((item) => {
-      const searchTerms = query.toLowerCase().split(" ");
-      return searchTerms.every(
-        (term) =>
-          item.title.toLowerCase().includes(term) ||
-          item.category.toLowerCase().includes(term)
-      );
-    });
+    const results = searchData.filter(
+      (item) =>
+        item.title.toLowerCase().includes(query.toLowerCase()) ||
+        item.category.toLowerCase().includes(query.toLowerCase())
+    );
     setSearchResults(results.slice(0, 5));
   };
 
@@ -94,7 +95,6 @@ const Navbar = () => {
               🔍
             </span>
           </div>
-
           {searchResults.length > 0 && (
             <div className="absolute top-full left-0 w-full bg-white border border-gray-100 rounded-xl mt-2 shadow-xl z-20 animate-fadeIn">
               {searchResults.map((result) => (
@@ -151,19 +151,18 @@ const Navbar = () => {
           <div className="flex items-center gap-2 cursor-pointer group relative">
             <img
               className="w-9 rounded-full hover:scale-110 transition-transform"
-              src={assets.profile_pic}
+              src={userProfileImage || assets.upload_area}
               alt="Profile"
             />
             <img className="w-2.5" src={assets.dropdown_icon} alt="Dropdown" />
             <div className="absolute top-0 right-0 pt-14 text-base font-medium text-gray-600 z-20 hidden group-hover:block">
               <div className="min-w-48 bg-white rounded-xl shadow-lg flex flex-col gap-3 p-4 border border-gray-100">
                 <p
-                  onClick={() => navigate("my-profile")}
+                  onClick={() => navigate("/my-profile")}
                   className="hover:text-blue-500 cursor-pointer transition-colors"
                 >
                   My Profile
                 </p>
-
                 <p
                   onClick={logout}
                   className="hover:text-blue-500 cursor-pointer transition-colors"
@@ -227,6 +226,15 @@ const Navbar = () => {
             >
               Contact
             </button>
+            <button
+              onClick={() => {
+                setShowMenu(false);
+                navigate("/admin-login");
+              }}
+              className="w-full py-3 border-b border-gray-200 text-left px-4 hover:bg-gray-100"
+            >
+              Admin Login
+            </button>
             {isLoggedIn ? (
               <>
                 <button
@@ -265,18 +273,45 @@ const Navbar = () => {
                 }}
                 className="w-full py-3 bg-blue-500 text-white rounded-lg mt-4"
               >
-                Sign in
+                Sign In
               </button>
             )}
             <button
               onClick={() => setShowMenu(false)}
-              className="absolute top-4 right-4 text-gray-600 hover:text-gray-800"
+              className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
             >
-              ❌
+              ✕
             </button>
           </div>
         )}
       </div>
+
+      <style jsx>{`
+        @keyframes fadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(-10px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+        @keyframes slideIn {
+          from {
+            transform: translateX(100%);
+          }
+          to {
+            transform: translateX(0);
+          }
+        }
+        .animate-fadeIn {
+          animation: fadeIn 0.2s ease-out;
+        }
+        .animate-slideIn {
+          animation: slideIn 0.3s ease-out;
+        }
+      `}</style>
     </div>
   );
 };
