@@ -1,6 +1,7 @@
 import React, { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../components/AuthContext";
+import VoiceInput from "../components/VoiceInput";
 
 const Login = () => {
   const [state, setState] = useState("Sign Up");
@@ -14,12 +15,46 @@ const Login = () => {
     birthday: "",
   });
   const [errors, setErrors] = useState({});
+  const [focusedField, setFocusedField] = useState(null);
+  const [rememberMe, setRememberMe] = useState(false);
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
+  const [forgotPasswordData, setForgotPasswordData] = useState({
+    email: "",
+    newPassword: "",
+    confirmPassword: "",
+  });
+  const [forgotPasswordErrors, setForgotPasswordErrors] = useState({});
   const navigate = useNavigate();
   const { login } = useContext(AuthContext);
 
-  const validateField = (name, value) => {
+  const handleFocus = (fieldName) => {
+    setFocusedField(fieldName);
+  };
+
+  const handleBlur = () => {
+    setFocusedField(null);
+  };
+
+  const handleVoiceResult = (result) => {
+    setData((prevData) => ({ ...prevData, name: result }));
+    setErrors((prevErrors) => ({ ...prevErrors, name: "" }));
+  };
+
+  const validateField = (fieldName, value) => {
     let error = "";
-    switch (name) {
+
+    switch (fieldName) {
+      case "name":
+        if (state === "Sign Up") {
+          if (!value.trim()) error = "Name is required";
+          else if (value.length < 2)
+            error = "Name must be at least 2 characters";
+          else if (value.length > 50)
+            error = "Name must be less than 50 characters";
+          else if (!/^[A-Za-z\s]+$/.test(value))
+            error = "Name should contain only letters and spaces";
+        }
+        break;
       case "email":
         if (!value.trim()) error = "Email is required";
         else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value))
@@ -32,25 +67,13 @@ const Login = () => {
         else if (value.length > 20)
           error = "Password must be less than 20 characters";
         break;
-      case "name":
-        if (state === "Sign Up") {
-          if (!value.trim()) error = "Name is required";
-          else if (value.length < 2)
-            error = "Name must be at least 2 characters";
-          else if (value.length > 50)
-            error = "Name must be less than 50 characters";
-          else if (!/^[A-Za-z\s]+$/.test(value))
-            error = "Name should contain only alphabets and spaces";
-        }
-        break;
       case "contactNo":
         if (state === "Sign Up") {
           if (!value.trim()) error = "Contact number is required";
           else if (!/^\d+$/.test(value))
             error = "Contact number should contain only digits";
           else if (value.length !== 10)
-            error =
-              "Contact number must be 10 digits and start only digit '0' ";
+            error = "Contact number must be 10 digits";
         }
         break;
       case "address":
@@ -152,16 +175,97 @@ const Login = () => {
           setErrors({});
         } else {
           login(result.token);
+          if (rememberMe) {
+            localStorage.setItem("authToken", result.token);
+          } else {
+            localStorage.removeItem("authToken");
+          }
           navigate("/");
         }
       } else {
-        console.error("Backend error:", result.message); // Log the error for debugging
+        console.error("Backend error:", result.message);
         alert(result.message);
       }
     } catch (error) {
-      console.error("Fetch error:", error); // Log the fetch error for debugging
+      console.error("Fetch error:", error);
       alert(
         "An error occurred while connecting to the server. Please ensure the backend server is running on port 5000."
+      );
+    }
+  };
+
+  // Forgot Password Form Validation
+  const validateForgotPasswordForm = () => {
+    const newErrors = {};
+
+    if (!forgotPasswordData.email.trim()) {
+      newErrors.email = "Email is required";
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(forgotPasswordData.email)) {
+      newErrors.email = "Invalid email format";
+    }
+
+    if (!forgotPasswordData.newPassword.trim()) {
+      newErrors.newPassword = "New password is required";
+    } else if (forgotPasswordData.newPassword.length < 8) {
+      newErrors.newPassword = "New password must be at least 8 characters";
+    } else if (forgotPasswordData.newPassword.length > 20) {
+      newErrors.newPassword = "New password must be less than 20 characters";
+    }
+
+    if (forgotPasswordData.newPassword !== forgotPasswordData.confirmPassword) {
+      newErrors.confirmPassword = "Passwords do not match";
+    }
+
+    setForgotPasswordErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  // Handle Forgot Password Input Changes
+  const handleForgotPasswordChange = (event) => {
+    const { name, value } = event.target;
+    setForgotPasswordData((prevData) => ({ ...prevData, [name]: value }));
+    setForgotPasswordErrors((prevErrors) => ({ ...prevErrors, [name]: "" }));
+  };
+
+  // Handle Forgot Password Submission
+  const handleForgotPasswordSubmit = async (event) => {
+    event.preventDefault();
+
+    if (!validateForgotPasswordForm()) return;
+
+    try {
+      const response = await fetch(
+        "http://localhost:5000/api/user/reset-password",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            email: forgotPasswordData.email,
+            newPassword: forgotPasswordData.newPassword,
+          }),
+        }
+      );
+
+      const result = await response.json();
+      if (result.success) {
+        alert(
+          "Password reset successfully! Please log in with your new password."
+        );
+        setShowForgotPassword(false);
+        setForgotPasswordData({
+          email: "",
+          newPassword: "",
+          confirmPassword: "",
+        });
+        setForgotPasswordErrors({});
+        setState("Login");
+      } else {
+        alert(result.message);
+      }
+    } catch (error) {
+      console.error("Fetch error:", error);
+      alert(
+        "An error occurred while resetting the password. Please try again."
       );
     }
   };
@@ -174,6 +278,7 @@ const Login = () => {
         <div className="absolute top-1/2 right-1/4 w-64 h-64 bg-purple-200 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob animation-delay-4000"></div>
       </div>
 
+      {/* Main Login Form */}
       <form
         onSubmit={handleSubmit}
         className="relative z-10 w-full max-w-md px-4"
@@ -192,7 +297,7 @@ const Login = () => {
 
           {state === "Sign Up" && (
             <>
-              <div className="w-full">
+              <div className="relative">
                 <label className="block text-sm font-medium text-zinc-700 mb-1">
                   Full Name
                 </label>
@@ -201,9 +306,16 @@ const Login = () => {
                   name="name"
                   type="text"
                   onChange={onChangeHandler}
+                  onFocus={() => handleFocus("name")}
+                  onBlur={handleBlur}
                   value={data.name}
                   placeholder="your name"
                 />
+                {focusedField === "name" && (
+                  <div className="absolute right-2 top-8">
+                    <VoiceInput onVoiceResult={handleVoiceResult} />
+                  </div>
+                )}
                 {errors.name && (
                   <p className="text-red-500 text-xs mt-1">{errors.name}</p>
                 )}
@@ -312,6 +424,29 @@ const Login = () => {
               <p className="text-red-500 text-xs mt-1">{errors.password}</p>
             )}
           </div>
+
+          {/* Remember Me and Forgot Password */}
+          {state === "Login" && (
+            <div className="flex justify-between items-center text-sm">
+              <label className="flex items-center space-x-2 text-zinc-600">
+                <input
+                  type="checkbox"
+                  checked={rememberMe}
+                  onChange={(e) => setRememberMe(e.target.checked)}
+                  className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-zinc-300 rounded"
+                />
+                <span>Remember me</span>
+              </label>
+              <button
+                type="button"
+                onClick={() => setShowForgotPassword(true)}
+                className="text-indigo-600 hover:underline focus:outline-none"
+              >
+                Forgot password?
+              </button>
+            </div>
+          )}
+
           <button
             type="submit"
             className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2.5 px-4 rounded-lg transition-colors duration-300 mt-2 shadow-md hover:shadow-lg active:scale-95"
@@ -360,6 +495,88 @@ const Login = () => {
           </div>
         </div>
       </form>
+
+      {/* Forgot Password Popup */}
+      {showForgotPassword && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+          <div className="bg-white rounded-xl p-6 w-full max-w-md">
+            <h2 className="text-2xl font-bold text-indigo-600 mb-4 text-center">
+              Reset Password
+            </h2>
+            <form onSubmit={handleForgotPasswordSubmit} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-zinc-700 mb-1">
+                  Email
+                </label>
+                <input
+                  type="email"
+                  name="email"
+                  value={forgotPasswordData.email}
+                  onChange={handleForgotPasswordChange}
+                  className="w-full px-4 py-2 rounded-lg border border-zinc-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+                  placeholder="your@email.com"
+                />
+                {forgotPasswordErrors.email && (
+                  <p className="text-red-500 text-xs mt-1">
+                    {forgotPasswordErrors.email}
+                  </p>
+                )}
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-zinc-700 mb-1">
+                  New Password
+                </label>
+                <input
+                  type="password"
+                  name="newPassword"
+                  value={forgotPasswordData.newPassword}
+                  onChange={handleForgotPasswordChange}
+                  className="w-full px-4 py-2 rounded-lg border border-zinc-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+                  placeholder="••••••••"
+                />
+                {forgotPasswordErrors.newPassword && (
+                  <p className="text-red-500 text-xs mt-1">
+                    {forgotPasswordErrors.newPassword}
+                  </p>
+                )}
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-zinc-700 mb-1">
+                  Confirm Password
+                </label>
+                <input
+                  type="password"
+                  name="confirmPassword"
+                  value={forgotPasswordData.confirmPassword}
+                  onChange={handleForgotPasswordChange}
+                  className="w-full px-4 py-2 rounded-lg border border-zinc-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+                  placeholder="••••••••"
+                />
+                {forgotPasswordErrors.confirmPassword && (
+                  <p className="text-red-500 text-xs mt-1">
+                    {forgotPasswordErrors.confirmPassword}
+                  </p>
+                )}
+              </div>
+              <div className="flex justify-between mt-4">
+                <button
+                  type="button"
+                  onClick={() => setShowForgotPassword(false)}
+                  className="bg-gray-500 hover:bg-gray-600 text-white font-medium py-2 px-4 rounded-lg transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 px-4 rounded-lg transition-colors"
+                >
+                  Submit
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
 
       <style jsx>{`
         @keyframes blob {
