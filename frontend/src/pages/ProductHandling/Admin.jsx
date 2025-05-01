@@ -67,7 +67,7 @@ const Admin = () => {
               Product Management
             </h2>
             <p className="text-gray-500 text-center mb-4">
-              Update inventory, manage product details, categories, and handle
+              Update inventory, Manage product details, categories, and handle
               availability.
             </p>
             <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors">
