@@ -7,6 +7,8 @@ import feedbackRouter from "./routes/feedbackRoute.js";    // Import Feedback Ro
 import deliveryRouter from "./routes/deliveryRoute.js";     // Import Delivery Routes
 import paymentRouter from "./routes/paymentRoute.js";        // Import Payment Routes
 import productRouter from "./routes/productRoute.js";        // Import Product Routes
+import orderRouter from "./routes/orderRoute.js";          // Import Order Routes
+
 
 // App Configuration
 const app = express();
@@ -25,6 +27,7 @@ app.use("/api/feedback", feedbackRouter);    // Add Feedback API Route
 app.use("/api/delivery", deliveryRouter);    // Add Delivery API Route
 app.use("/api/payment", paymentRouter);      // Add Payment API Route
 app.use("/api/products", productRouter);     // Add Products API Route
+app.use("/api/order", orderRouter);          // Add Order API Route
 
 // Root Route
 app.get("/", (req, res) => {

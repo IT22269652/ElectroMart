@@ -77,3 +77,17 @@ export const getAllPayments = async (req, res) => {
     res.status(500).json({ message: 'Error fetching all payments', details: error.message });
   }
 };
+
+// Delete a payment by ID
+export const deletePayment = async (req, res) => {
+  try {
+    const deletedPayment = await Payment.findByIdAndDelete(req.params.id);
+    if (!deletedPayment) {
+      return res.status(404).json({ message: 'Payment not found' });
+    }
+    res.status(200).json({ message: 'Payment deleted successfully' });
+  } catch (error) {
+    console.error('Error in deletePayment:', error);
+    res.status(500).json({ message: 'Failed to delete payment', details: error.message });
+  }
+};
