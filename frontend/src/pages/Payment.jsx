@@ -1,21 +1,25 @@
 import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+import { format, parse, isValid, isBefore, startOfMonth } from 'date-fns';
 
 const Payment = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { cartItems, deliveryDetails } = location.state || { cartItems: [], deliveryDetails: {} };
+  const { cartItems = [], deliveryDetails = {} } = location.state || {};
 
   const [formData, setFormData] = useState({
     nameOnCard: '',
     cardNumber: '',
-    expiryDate: '',
+    expiryDate: null, // Changed to null for DatePicker
     cvc: '',
   });
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
 
+  // Validate cart and delivery details
   if (!cartItems.length || !deliveryDetails._id) {
     return (
       <div className="min-h-screen bg-gray-100 flex items-center justify-center py-8">
@@ -26,7 +30,7 @@ const Payment = () => {
           </p>
           <button
             onClick={() => navigate('/cart')}
-            className="mt-4 bg-purple-600 text-white py-2 px-4 rounded-lg"
+            className="mt-4 bg-purple-600 text-white py-2 px-4 rounded-lg hover:bg-purple-700"
           >
             Go to Cart
           </button>
@@ -35,10 +39,14 @@ const Payment = () => {
     );
   }
 
+  // Calculate total
   const calculateTotal = () => {
-    return cartItems.reduce((total, item) => total + item.price * item.quantity, 0).toFixed(2);
+    return cartItems
+      .reduce((total, item) => total + (item.price || 0) * (item.quantity || 0), 0)
+      .toFixed(2);
   };
 
+  // Validation functions
   const validateNameOnCard = (value) => {
     const nameRegex = /^[A-Za-z\s]+$/;
     if (!value) return 'Name on card is required';
@@ -55,18 +63,14 @@ const Payment = () => {
     return '';
   };
 
-  const validateExpiryDate = (value) => {
-    if (!value) return 'Expiry date is required';
-    const expiryRegex = /^(0[1-9]|1[0-2])\/\d{2}$/;
-    if (!expiryRegex.test(value)) return 'Expiry date must be in MM/YY format';
+  const validateExpiryDate = (date) => {
+    if (!date || !isValid(date)) return 'Expiry date is required';
 
-    const [month, year] = value.split('/').map(Number);
-    const fullYear = 2000 + year;
     const currentDate = new Date();
-    const currentYear = currentDate.getFullYear();
-    const currentMonth = currentDate.getMonth() + 1;
+    const selectedMonthStart = startOfMonth(date);
+    const currentMonthStart = startOfMonth(currentDate);
 
-    if (fullYear < currentYear || (fullYear === currentYear && month < currentMonth)) {
+    if (isBefore(selectedMonthStart, currentMonthStart)) {
       return 'Expiry date cannot be in the past';
     }
     return '';
@@ -80,6 +84,7 @@ const Payment = () => {
     return '';
   };
 
+  // Format card number
   const formatCardNumber = (value) => {
     const cleanedValue = value.replace(/\D/g, '');
     const parts = [];
@@ -89,9 +94,11 @@ const Payment = () => {
     return parts.join(' ').slice(0, 19);
   };
 
+  // Handle input changes
   const handleChange = (e) => {
     const { name, value } = e.target;
     let formattedValue = value;
+
     if (name === 'cardNumber') {
       formattedValue = formatCardNumber(value);
     }
@@ -106,9 +113,6 @@ const Payment = () => {
       case 'cardNumber':
         error = validateCardNumber(formattedValue);
         break;
-      case 'expiryDate':
-        error = validateExpiryDate(value);
-        break;
       case 'cvc':
         error = validateCvc(value);
         break;
@@ -118,6 +122,14 @@ const Payment = () => {
     setErrors({ ...errors, [name]: error });
   };
 
+  // Handle expiry date change from DatePicker
+  const handleExpiryDateChange = (date) => {
+    setFormData({ ...formData, expiryDate: date });
+    const error = validateExpiryDate(date);
+    setErrors({ ...errors, expiryDate: error });
+  };
+
+  // Validate entire form
   const validateForm = () => {
     const newErrors = {
       nameOnCard: validateNameOnCard(formData.nameOnCard),
@@ -129,6 +141,7 @@ const Payment = () => {
     return !Object.values(newErrors).some((error) => error !== '');
   };
 
+  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     setErrors({});
@@ -140,13 +153,38 @@ const Payment = () => {
     }
 
     try {
-      const userId = '12345'; // Replace with actual user ID from auth context in a real app
+      const userId = '12345'; // TODO: Replace with authenticated user ID
+      console.log('Creating order with data:', { userId, deliveryId: deliveryDetails._id, cartItems });
+
+      // Step 1: Create order
+      const orderData = {
+        userId,
+        deliveryId: deliveryDetails._id,
+        paymentId: null, // Will update later
+        items: cartItems.map(item => ({
+          name: item.name || 'Unknown',
+          price: Number(item.price) || 0,
+          quantity: Number(item.quantity) || 0,
+          image: item.image || 'https://via.placeholder.com/150',
+          status: 'Pending',
+        })),
+        total: parseFloat(calculateTotal()),
+      };
+
+      const orderResponse = await axios.post('http://localhost:5000/api/order', orderData, {
+        headers: { 'Content-Type': 'application/json' },
+      });
+      const orderId = orderResponse.data._id;
+
+      console.log('Order created:', orderResponse.data);
+
+      // Step 2: Create payment
       const paymentData = {
         userId,
-        orderId: deliveryDetails._id,
+        orderId,
         nameOnCard: formData.nameOnCard,
         cardNumber: formData.cardNumber.replace(/\s/g, ''),
-        expiryDate: formData.expiryDate,
+        expiryDate: formData.expiryDate ? format(formData.expiryDate, 'MM/yy') : '',
         cvc: formData.cvc,
         amount: parseFloat(calculateTotal()),
       };
@@ -159,16 +197,21 @@ const Payment = () => {
 
       console.log('Payment response:', paymentResponse.data);
 
+      // Step 3: Update order with paymentId
+      await axios.put(`http://localhost:5000/api/order/${orderId}`, {
+        paymentId: paymentResponse.data._id,
+      });
+
       // Show popup message
       const confirmNavigation = window.confirm('Payment Successful! Click OK to view your order.');
       if (confirmNavigation) {
-        setFormData({ nameOnCard: '', cardNumber: '', expiryDate: '', cvc: '' });
+        setFormData({ nameOnCard: '', cardNumber: '', expiryDate: null, cvc: '' });
         navigate('/Order', {
-          state: { cartItems, deliveryDetails, paymentDetails: paymentResponse.data },
+          state: { cartItems, deliveryDetails, paymentDetails: paymentResponse.data, orderId },
         });
       }
     } catch (error) {
-      console.error('Full error response:', error.response);
+      console.error('Full error response:', error.response || error);
       const errorMessage =
         error.response?.data?.message ||
         error.message ||
@@ -236,16 +279,16 @@ const Payment = () => {
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="block text-gray-700 font-semibold mb-2">Expiry Date</label>
-                <input
-                  type="text"
-                  name="expiryDate"
-                  value={formData.expiryDate}
-                  onChange={handleChange}
-                  placeholder="MM/YY"
+                <DatePicker
+                  selected={formData.expiryDate}
+                  onChange={handleExpiryDateChange}
+                  dateFormat="MM/yy"
+                  showMonthYearPicker
+                  placeholderText="MM/YY"
+                  minDate={new Date()}
                   className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 ${
                     errors.expiryDate ? 'border-red-500 focus:ring-red-500' : 'focus:ring-purple-500'
                   }`}
-                  maxLength="5"
                   disabled={loading}
                 />
                 {errors.expiryDate && (
