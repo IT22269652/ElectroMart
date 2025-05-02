@@ -3,10 +3,10 @@ import cors from "cors";
 import "dotenv/config";
 import { connectDB } from "./config/db.js";
 import userRouter from "./routes/userRoute.js";
-import feedbackRouter from "./routes/feedbackRoute.js";    // Import Feedback Routes
-import deliveryRouter from "./routes/deliveryRoute.js";     // Import Delivery Routes
-import paymentRouter from "./routes/paymentRoute.js";        // Import Payment Routes
-import productRouter from "./routes/productRoute.js";        // Import Product Routes
+import feedbackRouter from "./routes/feedbackRoute.js"; // Import Feedback Routes
+import deliveryRouter from "./routes/deliveryRoute.js"; // Import Delivery Routes
+import paymentRouter from "./routes/paymentRoute.js"; // Import Payment Routes
+import productRouter from "./routes/productRoute.js"; // Import Product Routes
 
 // App Configuration
 const app = express();
@@ -21,10 +21,10 @@ connectDB();
 
 // API Routes
 app.use("/api/user", userRouter);
-app.use("/api/feedback", feedbackRouter);    // Add Feedback API Route
-app.use("/api/delivery", deliveryRouter);    // Add Delivery API Route
-app.use("/api/payment", paymentRouter);      // Add Payment API Route
-app.use("/api/products", productRouter);     // Add Products API Route
+app.use("/api/feedback", feedbackRouter); // Add Feedback API Route
+app.use("/api/delivery", deliveryRouter); // Add Delivery API Route
+app.use("/api/payment", paymentRouter); // Add Payment API Route
+app.use("/api/products", productRouter); // Add Products API Route
 
 // Root Route
 app.get("/", (req, res) => {
@@ -39,3 +39,12 @@ app
   .on("error", (err) => {
     console.error("❌ Server failed to start:", err.message);
   });
+
+// Add this after your middleware but before your routes
+import path from "path";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
