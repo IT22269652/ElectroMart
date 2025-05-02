@@ -19,6 +19,7 @@ const ProductForm = () => {
     images: "",
   });
   const [success, setSuccess] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const validateField = (name, value) => {
     let error = "";
@@ -76,7 +77,6 @@ const ProductForm = () => {
         return false;
       }
       if (file.size > 5 * 1024 * 1024) {
-        // 5MB
         setErrors((prev) => ({
           ...prev,
           images: "Image size must be less than 5MB",
@@ -108,8 +108,6 @@ const ProductForm = () => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-
-    // Validate the field
     const error = validateField(name, value);
 
     setErrors((prev) => ({
@@ -127,14 +125,12 @@ const ProductForm = () => {
     let isValid = true;
     const newErrors = { ...errors };
 
-    // Validate all fields
     Object.keys(productData).forEach((key) => {
       const error = validateField(key, productData[key]);
       newErrors[key] = error;
       if (error) isValid = false;
     });
 
-    // Validate images
     if (selectedImages.length === 0) {
       newErrors.images = "At least one image is required";
       isValid = false;
@@ -149,8 +145,10 @@ const ProductForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSuccess("");
+    setIsSubmitting(true);
 
     if (!validateForm()) {
+      setIsSubmitting(false);
       return;
     }
 
@@ -181,16 +179,18 @@ const ProductForm = () => {
     } catch (err) {
       setErrors((prev) => ({
         ...prev,
-        form: err.message,
+        form: err.message || "Failed to add product. Please try again.",
       }));
       console.error("Error adding product:", err);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-8 bg-gray-50 min-h-screen flex items-center justify-center">
-      <div className="w-full bg-white rounded-2xl shadow-xl p-8 transform transition-all duration-300 hover:shadow-2xl">
-        <h1 className="text-3xl font-extrabold text-gray-800 mb-8 text-center">
+    <div className="max-w-4xl mx-auto p-4 md:p-8 bg-gray-50 min-h-screen flex items-center justify-center">
+      <div className="w-full bg-white rounded-2xl shadow-xl p-6 md:p-8 transform transition-all duration-300 hover:shadow-2xl">
+        <h1 className="text-2xl md:text-3xl font-extrabold text-gray-800 mb-6 text-center">
           Add New Product
         </h1>
 
@@ -232,18 +232,18 @@ const ProductForm = () => {
         )}
 
         <form onSubmit={handleSubmit}>
-          <div className="mb-8">
+          <div className="mb-6">
             <label className="block text-gray-700 font-semibold mb-3">
               Upload Images (Max 4)
             </label>
             {errors.images && (
               <p className="text-red-500 text-sm mb-2">{errors.images}</p>
             )}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
               {selectedImages.map((image, index) => (
                 <div
                   key={index}
-                  className="relative h-40 border border-gray-200 rounded-lg overflow-hidden group shadow-sm hover:shadow-md transition-shadow"
+                  className="relative h-32 border border-gray-200 rounded-lg overflow-hidden group shadow-sm hover:shadow-md transition-shadow"
                 >
                   <img
                     src={URL.createObjectURL(image)}
@@ -252,7 +252,7 @@ const ProductForm = () => {
                   />
                   <button
                     type="button"
-                    className="absolute top-2 right-2 bg-red-500 text-white rounded-full w-8 h-8 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200 shadow-md hover:bg-red-600"
+                    className="absolute top-2 right-2 bg-red-500 text-white rounded-full w-7 h-7 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200 shadow-md hover:bg-red-600"
                     onClick={() => removeImage(index)}
                   >
                     ×
@@ -262,11 +262,11 @@ const ProductForm = () => {
 
               {selectedImages.length < 4 && (
                 <div
-                  className="h-40 border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center cursor-pointer hover:border-indigo-500 hover:bg-indigo-50 transition-all duration-200"
+                  className="h-32 border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center cursor-pointer hover:border-indigo-500 hover:bg-indigo-50 transition-all duration-200"
                   onClick={triggerFileInput}
                 >
                   <svg
-                    className="w-12 h-12 text-gray-400 mb-2"
+                    className="w-10 h-10 text-gray-400 mb-2"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -278,7 +278,7 @@ const ProductForm = () => {
                       d="M12 6v6m0 0v6m0-6h6m-6 0H6"
                     />
                   </svg>
-                  <span className="text-sm text-gray-500 font-medium">
+                  <span className="text-xs md:text-sm text-gray-500 font-medium text-center">
                     Add Image
                   </span>
                   <input
@@ -294,17 +294,17 @@ const ProductForm = () => {
             </div>
           </div>
 
-          <div className="mb-6">
-            <label className="block text-gray-700 font-semibold mb-3">
+          <div className="mb-5">
+            <label className="block text-gray-700 font-semibold mb-2">
               Product Name
             </label>
             <input
               type="text"
               name="name"
               placeholder="Enter product name"
-              className={`w-full px-4 py-3 border ${
+              className={`w-full px-4 py-2 border ${
                 errors.name ? "border-red-500" : "border-gray-300"
-              } rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all duration-200 shadow-sm hover:shadow-md`}
+              } rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all duration-200 shadow-sm`}
               value={productData.name}
               onChange={handleInputChange}
               required
@@ -315,17 +315,17 @@ const ProductForm = () => {
             )}
           </div>
 
-          <div className="mb-6">
-            <label className="block text-gray-700 font-semibold mb-3">
+          <div className="mb-5">
+            <label className="block text-gray-700 font-semibold mb-2">
               Product Description
             </label>
             <textarea
               name="description"
               placeholder="Write a description here (minimum 20 characters)"
               rows="4"
-              className={`w-full px-4 py-3 border ${
+              className={`w-full px-4 py-2 border ${
                 errors.description ? "border-red-500" : "border-gray-300"
-              } rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all duration-200 shadow-sm hover:shadow-md resize-none`}
+              } rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all duration-200 shadow-sm resize-none`}
               value={productData.description}
               onChange={handleInputChange}
               required
@@ -337,16 +337,16 @@ const ProductForm = () => {
             )}
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-6">
             <div>
-              <label className="block text-gray-700 font-semibold mb-3">
+              <label className="block text-gray-700 font-semibold mb-2">
                 Product Category
               </label>
               <select
                 name="category"
-                className={`w-full px-4 py-3 border ${
+                className={`w-full px-4 py-2 border ${
                   errors.category ? "border-red-500" : "border-gray-300"
-                } rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all duration-200 shadow-sm hover:shadow-md`}
+                } rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all duration-200 shadow-sm`}
                 value={productData.category}
                 onChange={handleInputChange}
                 required
@@ -364,16 +364,16 @@ const ProductForm = () => {
             </div>
 
             <div>
-              <label className="block text-gray-700 font-semibold mb-3">
+              <label className="block text-gray-700 font-semibold mb-2">
                 Product Price ($)
               </label>
               <input
                 type="number"
                 name="price"
                 placeholder="Enter price"
-                className={`w-full px-4 py-3 border ${
+                className={`w-full px-4 py-2 border ${
                   errors.price ? "border-red-500" : "border-gray-300"
-                } rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all duration-200 shadow-sm hover:shadow-md`}
+                } rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all duration-200 shadow-sm`}
                 value={productData.price}
                 onChange={handleInputChange}
                 required
@@ -390,9 +390,14 @@ const ProductForm = () => {
           <div className="flex justify-end">
             <button
               type="submit"
-              className="px-8 py-3 bg-gradient-to-r from-indigo-600 to-blue-500 text-white rounded-lg hover:from-indigo-700 hover:to-blue-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-lg font-semibold shadow-md transition-all duration-200 transform hover:scale-105"
+              disabled={isSubmitting}
+              className={`px-6 py-2 bg-gradient-to-r from-indigo-600 to-blue-500 text-white rounded-lg ${
+                isSubmitting
+                  ? "opacity-70 cursor-not-allowed"
+                  : "hover:from-indigo-700 hover:to-blue-600"
+              } focus:outline-none focus:ring-2 focus:ring-indigo-500 text-md font-semibold shadow-md transition-all duration-200`}
             >
-              Add Product
+              {isSubmitting ? "Adding..." : "Add Product"}
             </button>
           </div>
         </form>
