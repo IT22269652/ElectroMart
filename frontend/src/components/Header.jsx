@@ -1,195 +1,59 @@
-// src/components/Header.jsx
-import React, { useState, useEffect, useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useEffect, useState, useRef } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+import VoiceNavigation from "../components/VoiceNavigation";
 import { assets } from "../assets/assets";
-import VoiceNavigation from "./VoiceNavigation";
 
-const Header = () => {
+const Home = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [voiceFeedback, setVoiceFeedback] = useState(null);
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [logoutMessage, setLogoutMessage] = useState(null);
   const navigate = useNavigate();
+  const location = useLocation();
   const featuredProductsRef = useRef(null);
 
+  // Check for logout state from admin
+  useEffect(() => {
+    if (location.state?.fromAdminLogout) {
+      setLogoutMessage(location.state.message);
+      const timer = setTimeout(() => {
+        setLogoutMessage(null);
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [location]);
+
+  // Slideshow images
   const images = [assets.img1, assets.img2, assets.img3, assets.img5];
-  const categories = ["TV", "Camera", "Laptop", "iPhone", "Other Items"];
 
-  const products = [
-    // TV Products
-    {
-      id: "1",
-      name: "Smart TV",
-      price: "$499",
-      image: assets.LGTV01,
-      category: "TV",
-    },
-    {
-      id: "2",
-      name: "LG 4K TV",
-      price: "$699",
-      image: assets.LGTV02,
-      category: "TV",
-    },
-    {
-      id: "3",
-      name: "OLED TV",
-      price: "$999",
-      image: assets.SamsungTV01,
-      category: "TV",
-    },
-    {
-      id: "4",
-      name: "Sony TV",
-      price: "$799",
-      image: assets.SonyTV01,
-      category: "TV",
-    },
-    // Camera Products
-    {
-      id: "5",
-      name: "DSLR Camera",
-      price: "$799",
-      image: assets.camera01,
-      category: "Camera",
-    },
-    {
-      id: "6",
-      name: "Mirrorless Camera",
-      price: "$899",
-      image: assets.camera02,
-      category: "Camera",
-    },
-    {
-      id: "7",
-      name: "Action Camera",
-      price: "$299",
-      image: assets.camera03,
-      category: "Camera",
-    },
-    {
-      id: "8",
-      name: "Instant Camera",
-      price: "$199",
-      image: assets.camera04,
-      category: "Camera",
-    },
-    // Laptop Products
-    {
-      id: "9",
-      name: "Gaming Laptop",
-      price: "$1299",
-      image: assets.laptop01,
-      category: "Laptop",
-    },
-    {
-      id: "10",
-      name: "Ultrabook",
-      price: "$1099",
-      image: assets.laptop02,
-      category: "Laptop",
-    },
-    {
-      id: "11",
-      name: "2-in-1 Laptop",
-      price: "$899",
-      image: assets.laptop03,
-      category: "Laptop",
-    },
-    {
-      id: "12",
-      name: "Business Laptop",
-      price: "$999",
-      image: assets.laptop04,
-      category: "Laptop",
-    },
-    // iPhone Products
-    {
-      id: "13",
-      name: "iPhone 14 Pro",
-      price: "$999",
-      image: assets.Iphone01,
-      category: "iPhone",
-    },
-    {
-      id: "14",
-      name: "iPhone 11",
-      price: "$799",
-      image: assets.iphone02,
-      category: "iPhone",
-    },
-    {
-      id: "15",
-      name: "iPhone 13",
-      price: "$499",
-      image: assets.iphone03,
-      category: "iPhone",
-    },
-    {
-      id: "16",
-      name: "iPhone 14 Pro",
-      price: "$699",
-      image: assets.iphone04,
-      category: "iPhone",
-    },
-    // Other Items
-    {
-      id: "17",
-      name: "Wireless Earbuds",
-      price: "$199",
-      image: assets.earbud1,
-      category: "Other Items",
-    },
-    {
-      id: "18",
-      name: "Smart Watch",
-      price: "$299",
-      image: assets.smartwatch,
-      category: "Other Items",
-    },
-    {
-      id: "19",
-      name: "Bluetooth Speaker",
-      price: "$149",
-      image: assets.Bluetoothspeakers1,
-      category: "Other Items",
-    },
-    {
-      id: "20",
-      name: "External Hard Drive",
-      price: "$99",
-      image: assets.externalharddrive1,
-      category: "Other Items",
-    },
-    {
-      id: "21",
-      name: "Drone",
-      price: "$499",
-      image: assets.drone1,
-      category: "Other Items",
-    },
-    {
-      id: "22",
-      name: "VR Headset",
-      price: "$299",
-      image: assets.VRheadset1,
-      category: "Other Items",
-    },
-    {
-      id: "23",
-      name: "Projector",
-      price: "$399",
-      image: assets.projector1,
-      category: "Other Items",
-    },
-    {
-      id: "24",
-      name: "Home Theater System",
-      price: "$599",
-      image: assets.hometheatersystem1,
-      category: "Other Items",
-    },
-  ];
+  // Categories for filtering
+  const categories = ["TV", "Laptops", "Camera", "Iphone", "Other items"];
 
+  // Fetch products from the backend
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await fetch("http://localhost:5000/api/products");
+        const result = await response.json();
+        if (!response.ok) {
+          throw new Error(result.message || "Failed to fetch products");
+        }
+        setProducts(result);
+      } catch (err) {
+        setError(err.message);
+        console.error("Error fetching products:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, []);
+
+  // Slideshow effect
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length);
@@ -197,6 +61,7 @@ const Header = () => {
     return () => clearInterval(interval);
   }, [images.length]);
 
+  // Filter products based on selected categories
   const filteredProducts =
     selectedCategories.length > 0
       ? products.filter((product) =>
@@ -222,16 +87,32 @@ const Header = () => {
 
   const handleVoiceCommand = (command, handled) => {
     if (handled) {
-      setVoiceFeedback(`Executed: "${command}"`);
+      setVoiceFeedback(`Executed: ${command}`);
       setTimeout(() => setVoiceFeedback(null), 3000);
     }
   };
 
+  if (loading) return <div className="text-center p-6 text-gray-500">Loading...</div>;
+  if (error) return <div className="text-center p-6 text-red-600">{error}</div>;
+
   return (
     <div className="relative">
+      {/* Logout Success Message */}
+      {logoutMessage && (
+        <div className="fixed top-4 left-1/2 transform -translate-x-1/2 bg-green-500 text-white px-6 py-3 rounded-md shadow-lg z-50 flex items-center gap-2 animate-fade">
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+          </svg>
+          {logoutMessage}
+        </div>
+      )}
+
       {/* Voice Feedback Toast */}
       {voiceFeedback && (
-        <div className="fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded shadow-lg z-50 animate-fade">
+        <div className="fixed top-4 right-4 bg-blue-500 text-white px-4 py-2 rounded shadow-lg z-50 flex items-center gap-2">
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+            <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2h-1V9z" clipRule="evenodd" />
+          </svg>
           {voiceFeedback}
         </div>
       )}
@@ -272,7 +153,7 @@ const Header = () => {
           </button>
         </div>
 
-        {/* Image Slideshow with Navigation Dots */}
+        {/* Image Slideshow */}
         <div className="relative w-1/2 h-full flex items-center justify-center">
           {images.map((image, index) => (
             <img
@@ -291,7 +172,6 @@ const Header = () => {
                 className={`w-3 h-3 rounded-full transition-all ${
                   index === currentIndex ? "bg-white scale-125" : "bg-gray-300"
                 }`}
-                aria-label={`Go to slide ${index + 1}`}
                 onClick={() => setCurrentIndex(index)}
               />
             ))}
@@ -328,35 +208,64 @@ const Header = () => {
             ? `${selectedCategories.join(", ")} Products`
             : "Featured Products"}
         </h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-          {filteredProducts.map((product) => (
-            <div
-              key={product.id}
-              className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-transform hover:-translate-y-1 cursor-pointer"
-              onClick={() => handleProductClick(product.id)}
-            >
-              <div className="h-60 p-4 flex items-center justify-center bg-gray-50">
-                <img
-                  src={product.image}
-                  alt={product.name}
-                  className="h-full object-contain"
-                />
+        {products.length === 0 ? (
+          <p className="text-center text-gray-500">No products available.</p>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+            {filteredProducts.map((product) => (
+              <div
+                key={product._id}
+                className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-transform hover:-translate-y-1 cursor-pointer"
+                onClick={() => handleProductClick(product._id)}
+              >
+                <div className="h-60 p-4 flex items-center justify-center bg-gray-50">
+                  {product.images && product.images.length > 0 ? (
+                    <img
+                      src={`http://localhost:5000/uploads/${product.images[0]}`}
+                      alt={product.name}
+                      className="h-full object-contain"
+                      onError={(e) => {
+                        e.target.onerror = null;
+                        e.target.src = "https://via.placeholder.com/150";
+                      }}
+                    />
+                  ) : (
+                    <div className="h-full flex items-center justify-center text-gray-400">
+                      No Image
+                    </div>
+                  )}
+                </div>
+                <div className="p-4">
+                  <h3 className="text-lg font-semibold text-gray-800 mb-1">
+                    {product.name}
+                  </h3>
+                  <p className="text-blue-600 font-medium">
+                    ${product.price.toFixed(2)}
+                  </p>
+                  <button className="mt-3 w-full py-2 bg-blue-100 text-blue-600 rounded-md hover:bg-blue-200 transition">
+                    View Details
+                  </button>
+                </div>
               </div>
-              <div className="p-4">
-                <h3 className="text-lg font-semibold text-gray-800 mb-1">
-                  {product.name}
-                </h3>
-                <p className="text-blue-600 font-medium">{product.price}</p>
-                <button className="mt-3 w-full py-2 bg-blue-100 text-blue-600 rounded-md hover:bg-blue-200 transition">
-                  View Details
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </div>
+
+      {/* Add this style tag for animations */}
+      <style>{`
+        .animate-fade {
+          animation: fadeInOut 3s ease-in-out forwards;
+        }
+        @keyframes fadeInOut {
+          0% { opacity: 0; transform: translateY(-20px) translateX(-50%); }
+          10% { opacity: 1; transform: translateY(0) translateX(-50%); }
+          90% { opacity: 1; transform: translateY(0) translateX(-50%); }
+          100% { opacity: 0; transform: translateY(-20px) translateX(-50%); }
+        }
+      `}</style>
     </div>
   );
 };
 
-export default Header;
+export default Home;

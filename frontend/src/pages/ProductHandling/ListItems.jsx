@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
+import jsPDF from "jspdf";
 
 const ListItems = () => {
   const [products, setProducts] = useState([]);
@@ -142,6 +143,135 @@ const ListItems = () => {
     }
   };
 
+  // Generate PDF Report
+  const generatePDFReport = () => {
+    try {
+      // Step 1: Initialize jsPDF
+      const doc = new jsPDF();
+      console.log("jsPDF initialized successfully");
+
+      // Step 2: Add "ElectrMart" Title (Centered)
+      doc.setFontSize(22);
+      doc.setTextColor(33, 41, 56); // Dark gray color
+      const electrMartText = "ElectroMart";
+      const pageWidth = doc.internal.pageSize.getWidth();
+      const electrMartTextWidth = (doc.getStringUnitWidth(electrMartText) * 22) / doc.internal.scaleFactor;
+      const electrMartX = (pageWidth - electrMartTextWidth) / 2;
+      doc.text(electrMartText, electrMartX, 15);
+      console.log("ElectrMart title added to PDF");
+
+      // Step 3: Add "Product Inventory Report" Title
+      doc.setFontSize(18);
+      doc.setTextColor(33, 41, 56); // Dark gray color
+      doc.text("Product Inventory Report", 14, 30);
+      console.log("Product Inventory Report title added to PDF");
+
+      // Step 4: Add Date of Report
+      doc.setFontSize(12);
+      doc.setTextColor(100);
+      const generatedDate = new Date().toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      });
+      doc.text(`Generated on: ${generatedDate}`, 14, 40);
+      console.log("Date added to PDF");
+
+      // Step 5: Add Table Headers (Including Serial Number)
+      doc.setFontSize(10);
+      doc.setTextColor(33, 41, 56);
+      let yPosition = 50;
+      doc.text("P.No", 14, yPosition); // Serial Number
+      doc.text("Product Name", 30, yPosition);
+      doc.text("Product Price", 90, yPosition);
+      doc.text("Added Date", 130, yPosition);
+      console.log("Table headers added to PDF");
+
+      // Step 6: Add Horizontal Line Below Headers
+      yPosition += 5;
+      doc.setLineWidth(0.5);
+      doc.setDrawColor(67, 115, 192); // Blue line to match table header color
+      doc.line(14, yPosition, 194, yPosition); // Draw line from x=14 to x=194
+      yPosition += 5;
+      console.log("Header line added to PDF");
+
+      // Step 7: Add Table Data with Serial Numbers
+      doc.setFontSize(10);
+      doc.setTextColor(33, 41, 56);
+      filteredProducts.forEach((product, index) => {
+        try {
+          const serialNumber = (index + 1).toString();
+          const name = product.name && typeof product.name === "string" ? product.name : "N/A";
+          const price = typeof product.price === "number" ? `$${product.price.toFixed(2)}` : "N/A";
+          const addedDate = product.createdAt
+            ? new Date(product.createdAt).toLocaleDateString("en-US", {
+                year: "numeric",
+                month: "short",
+                day: "numeric",
+              })
+            : "N/A";
+
+          // Truncate name if too long to avoid overflow
+          const maxNameLength = 30;
+          const displayName = name.length > maxNameLength ? `${name.substring(0, maxNameLength)}...` : name;
+
+          doc.text(serialNumber, 14, yPosition);
+          doc.text(displayName, 30, yPosition);
+          doc.text(price, 90, yPosition);
+          doc.text(addedDate, 130, yPosition);
+
+          yPosition += 10;
+
+          // Check if we need a new page
+          if (yPosition > 270) {
+            doc.addPage();
+            yPosition = 20;
+            // Re-add headers on new page
+            doc.setFontSize(10);
+            doc.text("S.No", 14, yPosition);
+            doc.text("Product Name", 30, yPosition);
+            doc.text("Product Price", 90, yPosition);
+            doc.text("Added Date", 130, yPosition);
+            yPosition += 5;
+            doc.setLineWidth(0.5);
+            doc.setDrawColor(67, 115, 192);
+            doc.line(14, yPosition, 194, yPosition);
+            yPosition += 5;
+          }
+        } catch (err) {
+          console.error(`Error processing product at index ${index}:`, err);
+          doc.text((index + 1).toString(), 14, yPosition);
+          doc.text("Error", 30, yPosition);
+          doc.text("Error", 90, yPosition);
+          doc.text("Error", 130, yPosition);
+          yPosition += 10;
+        }
+      });
+      console.log("Table data with serial numbers added to PDF");
+
+      // Step 8: Add Footer with Page Numbers
+      const pageCount = doc.internal.getNumberOfPages();
+      for (let i = 1; i <= pageCount; i++) {
+        doc.setPage(i);
+        doc.setFontSize(10);
+        doc.setTextColor(150);
+        doc.text(
+          `Page ${i} of ${pageCount}`,
+          doc.internal.pageSize.width - 30,
+          doc.internal.pageSize.height - 10
+        );
+      }
+      console.log("Footer added to PDF");
+
+      // Step 9: Download the PDF
+      doc.save("product_inventory_report.pdf");
+      console.log("PDF saved successfully");
+    } catch (err) {
+      console.error("Detailed error in generatePDFReport:", err.message, err.stack);
+      alert("Failed to generate report. Please check the console for detailed errors and try again.");
+    }
+  };
+
   if (loading)
     return <div className="text-center p-6 text-gray-500">Loading...</div>;
   if (error) return <div className="text-center p-6 text-red-600">{error}</div>;
@@ -152,9 +282,9 @@ const ListItems = () => {
         Product Inventory
       </h1>
 
-      {/* Search Bar */}
-      <div className="mb-8">
-        <div className="relative max-w-md">
+      {/* Search Bar and Generate Report Button */}
+      <div className="mb-8 flex flex-col sm:flex-row gap-4">
+        <div className="relative max-w-md flex-1">
           <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
             <svg
               className="h-5 w-5 text-gray-400"
@@ -198,6 +328,12 @@ const ListItems = () => {
             </button>
           )}
         </div>
+        <button
+          onClick={generatePDFReport}
+          className="px-6 py-3 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors shadow-md"
+        >
+          Generate Report
+        </button>
       </div>
 
       <div className="shadow-lg rounded-lg overflow-hidden border border-gray-200">
@@ -227,9 +363,7 @@ const ListItems = () => {
                 filteredProducts.map((product, index) => (
                   <tr
                     key={product._id}
-                    className={`${
-                      index % 2 === 0 ? "bg-gray-50" : "bg-white"
-                    } hover:bg-indigo-50 transition-colors duration-200`}
+                    className={`${index % 2 === 0 ? "bg-gray-50" : "bg-white"} hover:bg-indigo-50 transition-colors duration-200`}
                   >
                     <td className="px-6 py-4">
                       {product.images && product.images.length > 0 ? (
