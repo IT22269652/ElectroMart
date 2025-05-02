@@ -19,7 +19,6 @@ const Login = () => {
   const [rememberMe, setRememberMe] = useState(false);
   const [showForgotPassword, setShowForgotPassword] = useState(false);
   const [forgotPasswordData, setForgotPasswordData] = useState({
-    email: "",
     newPassword: "",
     confirmPassword: "",
   });
@@ -187,9 +186,9 @@ const Login = () => {
         alert(result.message);
       }
     } catch (error) {
-      console.error("Fetch error:", error);
+      console.error("Fetch error in handleSubmit:", error.message);
       alert(
-        "An error occurred while connecting to the server. Please ensure the backend server is running on port 5000."
+        `An error occurred while connecting to the server: ${error.message}. Please ensure the backend server is running on port 5000.`
       );
     }
   };
@@ -198,10 +197,10 @@ const Login = () => {
   const validateForgotPasswordForm = () => {
     const newErrors = {};
 
-    if (!forgotPasswordData.email.trim()) {
-      newErrors.email = "Email is required";
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(forgotPasswordData.email)) {
-      newErrors.email = "Invalid email format";
+    if (!data.email.trim()) {
+      newErrors.email = "Please enter your email in the login form";
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) {
+      newErrors.email = "Invalid email format in login form";
     }
 
     if (!forgotPasswordData.newPassword.trim()) {
@@ -234,13 +233,14 @@ const Login = () => {
     if (!validateForgotPasswordForm()) return;
 
     try {
+      console.log("Sending reset password request for email:", data.email);
       const response = await fetch(
         "http://localhost:5000/api/user/reset-password",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            email: forgotPasswordData.email,
+            email: data.email,
             newPassword: forgotPasswordData.newPassword,
           }),
         }
@@ -252,20 +252,27 @@ const Login = () => {
           "Password reset successfully! Please log in with your new password."
         );
         setShowForgotPassword(false);
+        setData((prevData) => ({
+          ...prevData,
+          password: forgotPasswordData.newPassword,
+        }));
         setForgotPasswordData({
-          email: "",
           newPassword: "",
           confirmPassword: "",
         });
         setForgotPasswordErrors({});
         setState("Login");
       } else {
-        alert(result.message);
+        console.error("Backend error:", result.message);
+        alert(
+          result.message ||
+            "An error occurred while resetting the password. Please try again."
+        );
       }
     } catch (error) {
-      console.error("Fetch error:", error);
+      console.error("Fetch error in handleForgotPasswordSubmit:", error);
       alert(
-        "An error occurred while resetting the password. Please try again."
+        `An error occurred while connecting to the server: ${error.message}. Please ensure the backend server is running on port 5000.`
       );
     }
   };
@@ -506,24 +513,6 @@ const Login = () => {
             <form onSubmit={handleForgotPasswordSubmit} className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-zinc-700 mb-1">
-                  Email
-                </label>
-                <input
-                  type="email"
-                  name="email"
-                  value={forgotPasswordData.email}
-                  onChange={handleForgotPasswordChange}
-                  className="w-full px-4 py-2 rounded-lg border border-zinc-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
-                  placeholder="your@email.com"
-                />
-                {forgotPasswordErrors.email && (
-                  <p className="text-red-500 text-xs mt-1">
-                    {forgotPasswordErrors.email}
-                  </p>
-                )}
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-zinc-700 mb-1">
                   New Password
                 </label>
                 <input
@@ -558,6 +547,11 @@ const Login = () => {
                   </p>
                 )}
               </div>
+              {forgotPasswordErrors.email && (
+                <p className="text-red-500 text-xs mt-1 text-center">
+                  {forgotPasswordErrors.email}
+                </p>
+              )}
               <div className="flex justify-between mt-4">
                 <button
                   type="button"
