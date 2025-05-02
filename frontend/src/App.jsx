@@ -14,6 +14,13 @@ import Footer from "./components/Footer";
 import Feedbackdetails from "./pages/Feedbackdetails";
 import Updatefeedback from "./pages/Updatefeedback";
 
+import Cart from "./pages/Cart";
+import DeliveryManagement from "./pages/DeliveryManagement";
+import PaymentManagement from "./pages/PaymentMangement";
+import Payment from "./pages/Payment";
+import Delivery from "./pages/Delivery";
+import Order from "./pages/Order";
+
 import Header from "./components/Header";
 import AdminLogin from "./pages/ProductHandling/AdminLogin";
 import AdminDashboard from "./pages/ProductHandling/AdminDashboard";
@@ -44,6 +51,15 @@ const App = () => {
             <Route path="/updatefeedback" element={<Updatefeedback />} />
 
             <Route path="/" element={<Header />} />
+            <Route path="/cart" element={<Cart />} />
+            <Route path="/order" element={<Order />} />
+            <Route path="/delivery" element={<Delivery />} />
+            <Route path="/payment" element={<Payment />} />
+            <Route path="/payment-management" element={<PaymentManagement />} />
+            <Route
+              path="/delivery-management"
+              element={<DeliveryManagement />}
+            />
 
             <Route path="/admin-login" element={<AdminLogin />} />
             <Route path="/admin" element={<Admin />} />
