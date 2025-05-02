@@ -28,7 +28,7 @@ const Payment = () => {
             onClick={() => navigate('/cart')}
             className="mt-4 bg-purple-600 text-white py-2 px-4 rounded-lg"
           >
-            Go to Cart
+            Go to the Cart
           </button>
         </div>
       </div>
